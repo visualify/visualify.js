@@ -2,9 +2,17 @@
 
 ## On Your Local Machine
 
+You can deploy Visualify on your local machine by running a simple HTTP server.
+For example, you can use the `http-server` package from npm:
 
+```bash
+npm install -g http-server
+http-server ./docs
+```
 
-## GitHub Pages
+Then open your browser and navigate to `http://localhost:8080`.
+
+## On GitHub Pages
 
 There are three places to populate your docs for your GitHub repository:
 

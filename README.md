@@ -17,8 +17,26 @@ and visualized as a website, all with minimal effort on your part.
 To get started, simply create an `index.html` file and deploy it on GitHub Pages
 or your personal server.
 
-Here is the [Quick Start](quickstart) guide, which providing detailed
+Here is the [Quick Start](https://visualify.pharmacy.arizona.edu/#/quickstart) guide, which providing detailed
 instructions to help you begin.
+
+## Pages Mode Vs. Reacharts Mode
+
+Visualify supports two modes: `pages` and `reacharts`. The `pages` mode is
+designed for creating a data portal website as the front router, while the
+`reacharts` mode is designed for creating a single page with multiple plots. The
+`reacharts` mode is the best mate for [Docsify](https://docsify.js.org/) to show
+the plots of your data.
+
+Pages mode will be the default mode if you don't specify the mode in the
+configuration. You can specify the mode in the configuration file by setting the
+`mode` field to `pages` or `reacharts`.
+
+```json
+{
+    "mode": "pages"
+}
+```
 
 ## Features
 

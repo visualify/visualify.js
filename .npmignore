@@ -1,6 +1,6 @@
-/docs
 /public
 /build
 /node_modules
 /package-lock.json
 .hintrc
+./giithub

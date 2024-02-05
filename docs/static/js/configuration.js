@@ -33,7 +33,7 @@ config.corner = {
 config.auto2top = true;
 
 // basePath (String) | Base path of the website. You can set it to another directory or another domain name.
-config.basePath = '/docs/';
+// config.basePath = '/docs/';
 
 // autoHeader (Boolean) | Default: false | prepend a header to the page before converting it to HTML.
 config.autoHeader = false;

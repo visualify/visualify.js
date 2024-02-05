@@ -3,7 +3,7 @@ name: Build and Deploy Visualify
 on:
   push:
     branches:
-      - main
+      - release
 
 permissions:
   contents: write
@@ -28,11 +28,11 @@ jobs:
       - name: Build Application
         env:
           NODE_OPTIONS: --max_old_space_size=4096 # Adjust as needed
-        run: npm run rollup
+        run: npm run 
 
       # Ensure the build artifacts are in the `docs` directory
       - name: Move build artifacts to docs
-        run: mv ./dist ./docs
+        run: mv ./build ./docs
 
       #- name: Move build artifacts to docs
       #  run: rm -rf ./docs/build/dist/visualify.js.map

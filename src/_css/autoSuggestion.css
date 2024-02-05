@@ -1,0 +1,27 @@
+.autosuggestion {
+    position: relative;
+    margin: 1rem;
+}
+
+.suggestion-list {
+    position: relative;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow: auto;
+    z-index: 1000;
+    border-radius: 4px;
+}
+
+.suggestion-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}

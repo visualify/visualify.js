@@ -1,0 +1,25 @@
+.v-header .rainbow-text {
+    background-image: linear-gradient( to right, rgb(198, 255, 221), rgb(251, 215, 134), rgb(247, 121, 125));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.v-header .logo {
+    padding-bottom: 5px;
+}
+
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+}
+
+.selection-box-container {
+    max-width: 100%;
+    min-height: 100px;
+    height: auto;
+}
+
+.select-wrapper {
+    max-width: 100%;
+    margin-bottom: 10px;
+}

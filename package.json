@@ -1,0 +1,75 @@
+{
+    "name": "visualifyjs",
+    "version": "2.5.3-6-dev+24.2.4",
+    "main": "dist/visualify.js",
+    "dependencies": {
+        "@testing-library/jest-dom": "^5.17.0",
+        "@testing-library/react": "^13.4.0",
+        "@testing-library/user-event": "^13.5.0",
+        "ace-builds": "^1.32.0",
+        "axios": "^1.6.2",
+        "bootstrap": "^5.3.2",
+        "dompurify": "^3.0.6",
+        "echarts": "^5.4.3",
+        "echarts-for-react": "^3.0.2",
+        "hilbert": "^2.0.0",
+        "lodash": "^4.17.21",
+        "react": "^18.2.0",
+        "react-ace": "^10.1.0",
+        "react-bootstrap": "^2.9.1",
+        "react-dom": "^18.2.0",
+        "react-markdown": "^9.0.1",
+        "react-plotly.js": "^2.6.0",
+        "react-router-dom": "^6.20.0",
+        "react-scripts": "5.0.1",
+        "react-select": "^5.8.0",
+        "remark": "^15.0.1",
+        "remark-html": "^16.0.1",
+        "web-vitals": "^2.1.4"
+    },
+    "scripts": {
+        "rollup": "rollup -c",
+        "start": "react-app-rewired start",
+        "build": "npm run rollup & react-app-rewired build",
+        "test": "react-app-rewired test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@babel/core": "^7.23.5",
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+        "@babel/preset-env": "^7.23.5",
+        "@babel/preset-react": "^7.23.3",
+        "@rollup/plugin-babel": "^6.0.4",
+        "@rollup/plugin-commonjs": "^25.0.7",
+        "@rollup/plugin-image": "^3.0.3",
+        "@rollup/plugin-json": "^6.0.1",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-replace": "^5.0.5",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-url": "^8.0.2",
+        "babel-plugin-inline-react-svg": "^2.0.2",
+        "react-app-rewired": "^2.2.1",
+        "rollup": "^2.79.1",
+        "rollup-plugin-css-only": "^4.5.2",
+        "rollup-plugin-polyfill-node": "^0.13.0",
+        "rollup-plugin-postcss": "^4.0.2"
+    }
+}

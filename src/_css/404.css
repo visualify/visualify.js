@@ -1,0 +1,116 @@
+* {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body.colorlib-body {
+    padding: 0;
+    margin: 0;
+}
+
+#colorlib-notfound {
+    min-height: 60vh;
+    /* Ensures that the container takes at least the full viewport height */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Stack children vertically */
+    justify-content: center;
+    /* Center children vertically */
+    align-items: center;
+    /* Center children horizontally */
+    padding: 3rem 1rem;
+    /* Add some padding around */
+}
+
+.colorlib-notfound {
+    max-width: 767px;
+    width: -moz-fit-content;
+    width: fit-content;
+    line-height: 1.4;
+    padding: 0 15px;
+    text-align: center;
+    /* Center the text */
+}
+
+.colorlib-notfound .colorlib-notfound-404 {
+    position: relative;
+    height: 150px;
+    line-height: 150px;
+    margin-bottom: 25px;
+}
+
+.colorlib-notfound .colorlib-notfound-404 h1 {
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 186px;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    background: url('../_media/404.png') no-repeat center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: cover;
+}
+
+.colorlib-notfound h2 {
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.colorlib-notfound p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.colorlib-notfound a {
+    font-family: 'Titillium Web', sans-serif;
+    display: inline-block;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    background: #5c91fe;
+    padding: 10px 40px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 1px;
+    margin-top: 15px;
+    -webkit-transition: 0.2s all;
+    transition: 0.2s all;
+}
+
+.colorlib-notfound a:hover {
+    opacity: 0.8;
+}
+
+.colorlib-copyrigh {
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+    position: absolute;
+    /* Make it break out of the flexbox */
+    bottom: 10px;
+    /* Position it at the bottom of the page */
+}
+
+@media only screen and (max-width: 767px) {
+    .colorlib-notfound .colorlib-notfound-404 {
+        height: 110px;
+        line-height: 110px;
+    }
+    .colorlib-notfound .colorlib-notfound-404 h1 {
+        font-size: 120px;
+    }
+}
+
+@media only screen and (max-height: 600px) {
+    #colorlib-notfound {
+        min-height: 100vh;
+    }
+}

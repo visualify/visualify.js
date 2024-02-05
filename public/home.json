@@ -1,0 +1,14 @@
+{
+    "grid": {
+        "rows": 2,
+        "cols": 1
+    },
+    "components": [{
+        "id": "Browser",
+        "row": 2,
+        "type": "Browser",
+        "width": "200%",
+        "height": "500px",
+        "src": "https://visualify.pharmacy.arizona.edu"
+    }]
+}

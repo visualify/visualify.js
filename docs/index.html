@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>visualify.js official site</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/x-icon" href="static/logo/favicon.ico" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css" />
+    <link rel="stylesheet" href="./static/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />
+    <link rel="stylesheet" href="./static/css/fluff-stuff.css" />
+    <script src="./static/js/configuration.js"></script>
+    <script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>
+    <!-- Docsify siderbarbar -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@latest/marked.min.js"></script>
+</head>
+
+<body>
+    <div id="docsify"></div>
+    <script>
+        // Set html "lang" attribute based on URL
+        var lang = location.hash.match(/#\/(zh-cn)\//);
+        if (lang) {
+            document.documentElement.setAttribute("lang", lang[1]);
+        }
+
+        window.$docsify = config;
+        $visualify = {
+            mode: 'charts',
+        }
+
+        /*
+        const custom_buttons = [
+            ["MmTrBC", "./MmTrBC/", 1],
+            ["Esodev", "./EsoDev/", 3],
+        ];
+        */
+    </script>
+    <!-- Docsify v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="./static/js/fluff.js" defer></script>
+    <!-- Plugins -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.normalize"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.js"></script>
+    <!-- Copy to Clipboard -->
+    <script src="https://unpkg.com/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
+    <!-- docsify-tabs (latest v1.x.x) -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1/dist/docsify-tabs.min.js"></script>
+    <!-- LaTeX display engine script Here -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+    <script src="https://unpkg.com/docsify-latex@0.5.2/dist/docsify-latex.min.js"></script>
+    <!-- flexible-alerts -->
+    <script src="https://unpkg.com/docsify-plugin-flexible-alerts@1.1.1/dist/docsify-plugin-flexible-alerts.min.js"></script>
+    <!-- Mermaid -->
+    <script type="module">
+        import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true }); window.mermaid = mermaid;
+    </script>
+    <!-- Prism -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+    <!-- Visualify -->
+    <script src="./static/js/visualify.js"></script>
+</body>
+
+</html>

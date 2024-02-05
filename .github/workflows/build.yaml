@@ -1,0 +1,51 @@
+name: Build and Deploy Visualify
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install Dependencies
+        run: npm install
+
+      # You may replace "build" with any specific build command for your application
+      - name: Build Application
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096 # Adjust as needed
+        run: npm run rollup
+
+      # Ensure the build artifacts are in the `docs` directory
+      - name: Move build artifacts to docs
+        run: mv ./dist ./docs
+
+      #- name: Move build artifacts to docs
+      #  run: rm -rf ./docs/build/dist/visualify.js.map
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.VISUALIFY_BUILD }}
+          publish_dir: ./docs # Changed to docs
+
+      # If you want to upload the build artifact to GitHub
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: visualify-buildF
+          path: docs # Changed to docs

@@ -32,7 +32,7 @@ jobs:
 
       # Ensure the build artifacts are in the `docs` directory
       - name: Move build artifacts to docs
-        run: mv ./build ./docs
+        run: mv ./dist ./docs
 
       #- name: Move build artifacts to docs
       #  run: rm -rf ./docs/build/dist/visualify.js.map

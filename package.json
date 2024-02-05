@@ -1,7 +1,16 @@
 {
     "name": "visualifyjs",
-    "version": "2.5.3-9-dev+24.2.5",
+    "version": "2.5.3",
     "main": "dist/visualify.js",
+    "homepage": "https://visualify.pharmacy.arizona.edu",
+    "license": "GNU General Public License v3.0",
+    "description": "Visualify is a web-based platform for visualizing and analyzing large-scale omics data.",
+    "keywords": [
+        "visualization",
+        "analysis",
+        "web",
+        "platform"
+    ],
     "dependencies": {
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^13.4.0",

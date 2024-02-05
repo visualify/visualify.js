@@ -12,7 +12,7 @@ config = {};
 config.name = 'visualify.js';
 
 // repo (String) | Configure repository URL or username/repo for GitHub Corner widget in the top right corner
-config.repo = 'https://github.com/usleolihao';
+config.repo = 'https://github.com/visualify/';
 
 /*
 config.corner = {
@@ -33,7 +33,7 @@ config.corner = {
 config.auto2top = true;
 
 // basePath (String) | Base path of the website. You can set it to another directory or another domain name.
-// config.basePath = '/docs/';
+config.basePath = 'https://visualify.github.io/visualify.js/docs/';
 
 // autoHeader (Boolean) | Default: false | prepend a header to the page before converting it to HTML.
 config.autoHeader = false;

@@ -112,7 +112,7 @@ function Vfooter({ config }) {
 				<li
 					key='v_github'
 					className='list-inline-item'>
-					<a href='https://github.com/visualify'>
+					<a href='https://github.com/visualify/visualify.js'>
 						<i className='fa-brands fa-github fa-lg'></i>
 					</a>
 				</li>,

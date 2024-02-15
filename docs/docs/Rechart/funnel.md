@@ -117,10 +117,58 @@ const Contrast_funnel = {
 return getOption;`
 };
 
+const Multiple_funnel = {
+    code: `const getOption = () => {
+    return {
+        type: 'funnel',
+        data: {
+            'Funnel 1': [
+                { value: 60, name: 'APP' },
+                { value: 40, name: 'PC' },
+                { value: 20, name: 'Mobile' },
+                { value: 80, name: 'Wechat' },
+                { value: 100, name: 'Mini App' }
+            ],
+            'Funnel 2': [
+                { value: 60, name: 'APP' },
+                { value: 40, name: 'PC' },
+                { value: 20, name: 'Mobile' },
+                { value: 80, name: 'Wechat' },
+                { value: 100, name: 'Mini App' }
+            ],
+        },
+        width: ['35%','35%'],
+        left: ['10%','55%'],
+        sort: [ 'descending', 'ascending'],
+        label: [
+            {
+                position: 'left',
+            },
+            {
+                position: 'right',
+            }
+        ],
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c}%'
+        },
+        toolbox: {
+            feature: {
+                dataView: { readOnly: false },
+                restore: {},
+                saveAsImage: {}
+            }
+        }
+    }
+};
+return getOption;`
+};
+
 const ex1 = new $visualify.LiveEditor(Basic_Funnel).mount('#ex1');
 const ex2 = new $visualify.LiveEditor(Pyramid_Funnel).mount('#ex2');
 const ex3 = new $visualify.LiveEditor(More_Funnel).mount('#ex3');
 const ex4 = new $visualify.LiveEditor(Contrast_funnel).mount('#ex4');
+const ex5 = new $visualify.LiveEditor(Multiple_funnel).mount('#ex5');
 </script>
 
 # Radar Chart

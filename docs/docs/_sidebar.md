@@ -13,6 +13,7 @@
     -   [Pie Chart](/Rechart/pie.md)
     -   [Radar Chart](/Rechart/radar.md)
     -   [Funnel Chart](/Rechart/funnel.md)
+    -   [Scatter Chart](/Rechart/scatter.md)
     
   
 -   Page Mode

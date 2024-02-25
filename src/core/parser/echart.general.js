@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-12-02 11:56:41
- * @FilePath     : /visualifyjs/src/core/parser/echart.general.js
+ * @FilePath     : /visualify.js/src/core/parser/echart.general.js
  * @Description  :
  *
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
@@ -33,11 +33,14 @@ const _parser_gereral = (options = {}, preset = {}) => {
 
 	if ('xAxis' in options) {
 		if (options.xAxis === false) parsedOptions.xAxis = { show: false };
-		else if (options.xAxis)
+		else if (Array.isArray(options.xAxis)) {
 			parsedOptions.xAxis = {
 				...parsedOptions?.xAxis,
 				data: options.xAxis,
 			};
+		} else {
+			parsedOptions.xAxis = options.xAxis;
+		}
 	}
 
 	if ('yAxis' in options) {
@@ -47,6 +50,7 @@ const _parser_gereral = (options = {}, preset = {}) => {
 				...parsedOptions?.yAxis,
 				data: options.yAxis,
 			};
+		else parsedOptions.yAxis = options.yAxis;
 	}
 
 	if ('xAxisLabel' in options) {

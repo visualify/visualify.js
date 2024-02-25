@@ -1,9 +1,6 @@
 <script defers>
 
-
-const Basic_Scatter = {
-    code: 
-`function rangeRandom(min, max, precision) {
+function rangeRandom(min, max, precision) {
     return (Math.random() * (max - min) + min).toFixed(precision)
 }
 
@@ -15,11 +12,13 @@ for (let i = 0; i < 50; i++) {
     ])
 }
 
-const getOption = () => {
+const Basic_Scatter = {
+    code: 
+`const getOption = () => {
     return {
         type: 'scatter',
         data: {
-            'random': randomData,
+            'random': ${JSON.stringify(randomData)},
         },
 	}
 };
@@ -138,6 +137,14 @@ const Grouped_Scatter = {
             [180.3, 83.2], [180.3, 83.2]
           ]
         },
+        xAxis:{
+            min: 140,
+            max: 200,
+        },
+        yAxis:{
+            min: 40,
+            max: 120,
+        },
         xAxisLabel: 'Height',
         yAxisLabel: 'Weight',
         xAxisNameGap: 5,
@@ -152,88 +159,83 @@ const Grouped_Scatter = {
 return getOption;`
 };
 
-const More_Funnel = {
+const Quadrant = {
     code: `const getOption = () => {
     return {
         type: 'scatter',
         data: {
-            'Funnel': [
-        [10.0, 8.04],
-        [8.07, 6.95],
-        [13.0, 7.58],
-        [9.05, 8.81],
-        [11.0, 8.33],
-        [14.0, 7.66],
-        [13.4, 6.81],
-        [10.0, 6.33],
-        [14.0, 8.96],
-        [12.5, 6.82],
-        [9.15, 7.2],
-        [11.5, 7.2],
-        [3.03, 4.23],
-        [12.2, 7.83],
-        [2.02, 4.47],
-        [1.05, 3.33],
-        [4.05, 4.96],
-        [6.03, 7.24],
-        [12.0, 6.26],
-        [12.0, 8.84],
-        [7.08, 5.82],
-        [5.02, 5.68]
-      ],
+            'Data': 
+                [{
+                    value: [1, 1],
+                    symbol: 'none',
+                }, {
+                    value: [0, -1],
+                    symbol: 'none',
+                },
+                [0.35, 0.18],
+                [0.55, 0.77],
+                [0.88, 0.23],
+                [0.23, -0.25],
+                [0.65, -0.66]
+                ],
         },
+        markArea: {
+          itemStyle: {
+            color: '#FFFAFA',
+            opacity: '0.7'
+          },
+          emphasis: {
+            itemStyle: {
+              color: '#FFFAFA',
+              opacity: '0.7'
+            },
+          },
+          data: [
+            [{
+              coord: [0.5, 0]
+            }, {
+              coord: [1, 1]
+            }],
+            [{
+              coord: [0.5, 0]
+            }, {
+              coord: [0, -1]
+            }]
+          ]
+        },
+        markLine: {
+          symbol: 'none',
+          data: [
+            [{
+              value: 0.5,
+              coord: [0.5, -1]
+            }, {
+              coord: [0.5, 1]
+            }]
+          ]
+        },
+        legend: false,
 	}
 };
 return getOption;`
 };
 
-const Contrast_funnel = {
+const Bubble = {
     code: `const getOption = () => {
     return {
-        type: 'funnel',
+        type: 'scatter',
         data: {
-            'Funnel 1': [
-                { value: 60, name: 'APP' },
-                { value: 40, name: 'PC' },
-                { value: 20, name: 'Mobile' },
-                { value: 80, name: 'Wechat' },
-                { value: 100, name: 'Mini App' }
-            ],
-            'Funnel 2': [
-                { value: 30, name: 'APP' },
-                { value: 10, name: 'PC' },
-                { value: 5, name: 'Mobile' },
-                { value: 50, name: 'Wechat' },
-                { value: 80, name: 'Mini App' }
-            ],
+            'bubble': ${JSON.stringify(randomData)},
         },
-        width: '80%',
-        z: [undefined, 100],
-        emphasis: [
-            {
-                label: {
-                    position: 'inside',
-                    formatter: '{b}Expected: {c}%'
-                }
-            },
-            {
-                label: {
-                    position: 'inside',
-                    formatter: '{b}Actual: {c}%'
-                }
-            }
-        ],
-        tooltip: {
-            trigger: 'item',
-            formatter: '{a} <br/>{b} : {c}%'
+        itemStyle: {
+          normal: {
+            opacity: 0.8
+          }
         },
-        toolbox: {
-            feature: {
-                dataView: { readOnly: false },
-                restore: {},
-                saveAsImage: {}
-            }
-        }
+        symbolSize: function(val) {
+          const [a, b] = val
+          return Math.abs(a - b) / 2
+        },
     }
 };
 return getOption;`
@@ -241,8 +243,8 @@ return getOption;`
 
 const ex1 = new $visualify.LiveEditor(Basic_Scatter).mount('#ex1');
 const ex2 = new $visualify.LiveEditor(Grouped_Scatter).mount('#ex2');
-//const ex3 = new $visualify.LiveEditor(More_Funnel).mount('#ex3');
-//const ex4 = new $visualify.LiveEditor(Contrast_funnel).mount('#ex4');
+const ex3 = new $visualify.LiveEditor(Quadrant).mount('#ex3');
+const ex4 = new $visualify.LiveEditor(Bubble).mount('#ex4');
 </script>
 
 # Scatter Chart
@@ -255,17 +257,13 @@ const ex2 = new $visualify.LiveEditor(Grouped_Scatter).mount('#ex2');
 
 <div id="ex2"></div>
 
-## More Attribute for Funnel Chart
+## Quadrant Scatter Chart
 
 <div id="ex3"></div>
 
-## Contrast Funnel Chart
+## Bubble Scatter Chart
 
 <div id="ex4"></div>
-
-## Multiple Funnel Chart
-
-<div id="ex5"></div>
 
 ## Overall Configuration
 

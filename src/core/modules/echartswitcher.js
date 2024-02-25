@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-12-01 14:21:40
- * @FilePath     : /visualifyjs/src/core/modules/echartswitcher.js
+ * @FilePath     : /visualify.js/src/core/modules/echartswitcher.js
  * @Description  :
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
  */

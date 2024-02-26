@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-11-06 17:23:59
- * @FilePath     : /visualifyjs/src/core/components/scatterL.js
+ * @FilePath     : /visualify.js/src/core/components/scatterL.js
  * @Description  :
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
  */
@@ -32,7 +32,7 @@ function ScatterBio({ props, style }) {
 
 	useEffect(() => {
 		let option = parseConfig(props);
-		console.log('option: ', option);
+		//console.log('option: ', option);
 		let fetched_dat = null;
 
 		// Check if the sharedData has changed
@@ -68,7 +68,7 @@ function ScatterBio({ props, style }) {
 						sharedData,
 						ibox,
 					);
-					console.log(fetched_dat, 'fetched_dat');
+					//console.log(fetched_dat, 'fetched_dat');
 				}
 				var { series, legend, visualMap, title } = parseData(
 					fetched_dat,

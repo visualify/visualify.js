@@ -8,9 +8,12 @@ Insert the `visualify` script in your `index.html` file.
 ```html
 <head>
   ...
-  <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/visualifyjs"></script>
+  
   <!-- or -->
-    <!-- script src="https://cdn.jsdelivr.net/npm/visualifyjs"></!-- -->
+          <!-- <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script -->
+  <!-- or -->
+      <!-- script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@release/dist/visualify.js"></script> -->
 </head>
 ```
 
@@ -88,9 +91,11 @@ create `index.html`:
         //...
       };
     </script>
-    <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/visualifyjs"></script>
     <!-- or -->
-    <!-- script src="https://cdn.jsdelivr.net/npm/visualifyjs"></!-- -->
+      <!-- <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script> -->
+    <!-- or -->
+      <!-- script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@release/dist/visualify.js"></script> -->
   </body>
 </html>
 

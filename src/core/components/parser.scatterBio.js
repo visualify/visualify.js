@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-11-12 17:35:02
- * @FilePath     : /visualifyjs/src/core/components/parser.scatterBio.js
+ * @FilePath     : /visualify.js/src/core/components/parser.scatterBio.js
  * @Description  :
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
  */
@@ -188,7 +188,7 @@ export const handleAPI = async (config, sharedData, bbox = false) => {
 			//console.log(`result for ${item} : `, result);
 			fetched_dat[item] = result;
 		} else if (id) {
-			//console.log(`id for ${item} : `, id, dependencies);
+			//console.log(`dep2 id for ${item} : `, id, dependencies);
 
 			const result = await simplefetch(href, {
 				id: dependencies[dep] + '/' + id,
@@ -255,6 +255,8 @@ export const parseData = (fetched, config, sharedData) => {
 		throw new Error('fetched data is not valid: ' + fetched);
 	}
 
+	//console.log(`fetched: `, fetched);
+
 	const metadata = fetched.metadata;
 	const genes = fetched.gene;
 
@@ -292,7 +294,7 @@ export const parseData = (fetched, config, sharedData) => {
 				config?.mapping?.axis,
 			),
 			legend: handleLegend(category),
-			visualMap: handleVisualMap(genes),
+			visualMap: handleVisualMap(genes, config.visualmap),
 			title: fetched?.fetched_ID?.gene ?? '',
 		};
 	} catch (error) {
@@ -541,9 +543,13 @@ const handleLegend = (category) => {
 	return legend;
 };
 
-const handleVisualMap = (genes) => {
+const handleVisualMap = (genes, visualmap = {}) => {
 	if (!genes) return [];
 	// Initialize max and min variables with the first value in the object
+
+	console.log(`visualmap in handleVisualMap: `, visualmap);
+
+
 	let maxValue = Number.NEGATIVE_INFINITY;
 	let minValue = Number.POSITIVE_INFINITY;
 	let visualMap = {};
@@ -573,6 +579,8 @@ const handleVisualMap = (genes) => {
 	visualMap.textStyle = {
 		writingMode: 'vertical-lr',
 	};
+
+	visualMap = { ...visualMap, ...visualmap };
 
 	//console.log(`handlesVisualMap: `, visualMap);
 	return visualMap;

@@ -6,6 +6,6 @@
 
 > A magical data portal generator
 
-[GitHub](https://github.com/usleolihao)
+[GitHub](https://github.com/visualify)
 [Getting Started](#visualify)
 

@@ -102,9 +102,7 @@ corner of the site.
 
 ```js
 window.$docsify = {
-  repo: 'leolihao/visualify',
-  // or
-  repo: 'https://github.com/leolihao/visualify/',
+  repo: 'https://github.com/visualify',
 };
 ```
 

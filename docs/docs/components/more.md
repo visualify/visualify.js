@@ -1,37 +1,42 @@
-# More components
+# Utility Components
 
-## Markdown
+These components provide UI controls and interactive elements for page mode layouts. They work alongside visualization components to create complete data exploration interfaces.
 
-The Markdown component is used to render markdown content on the page.
+## Overview
 
+| Component | Purpose | Interactive |
+|-----------|---------|-------------|
+| SearchBar | Gene/item search with autocomplete | Yes - triggers other components |
+| List | Display and manage a list of items | Yes - add/remove/clear |
+| RatioBox | Radio button selector for options | Yes - stores selection globally |
 
+---
 
 ## SearchBar
 
-The SearchBar component is used to search for a specific gene.
+The SearchBar component provides a search input with autocomplete, powered by an external data source. When a user selects a result, the value can be saved to the global data store for use by other components.
 
 ### Properties
 
-The SearchBar component has the following properties:
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `type` | string | Yes | Must be `"SearchBar"`. |
+| `id` | string | Yes | Unique identifier for the component. |
+| `row` | int | No | The row in which the component is displayed. |
+| `col` | int | No | The column in which the component is displayed. |
+| `title` | string | No | Label displayed above the search input. |
+| `config` | object | Yes | Configuration for data source and behavior. See below. |
+| `style` | object | No | CSS styles applied to the component container. |
 
--   `type` (string): The type of the component, in this case `SearchBar`.
--   `id` (string): The unique identifier of the component.
--   `row` (int): The row in which the component is to be displayed.
--   `col` (int): The column in which the component is to be displayed.
--   `config` (object): The configuration of the component.
--   `style` (object): The style of the component.
--   `title` (string): The title of the component.
+#### Config Properties
 
-### config Properties
-
-The `config` object has the following properties:
-
--   `save` (boolean/String): Whether to save the search or not.
-    -   (string): The name to be saved at global data.
--   `source` (object): The source of the component.
-    -   `name` (string): The name of the source.
-    -   `url` (string): The URL of the source.
-    -   `responseKey` (string): The response key of the source.
+| Property | Type | Description |
+|----------|------|-------------|
+| `save` | boolean / string | If `true`, saves the selected value to global data using the component `id` as the key. If a string, uses that string as the global data key instead. |
+| `source` | object | Defines the autocomplete data source. |
+| `source.name` | string | Name identifier for the data source. |
+| `source.url` | string | API endpoint that returns the list of searchable items. |
+| `source.responseKey` | string | Key in the API response that contains the list of items. |
 
 ### Example
 
@@ -51,78 +56,102 @@ The `config` object has the following properties:
 }
 ```
 
+### Interaction with Other Components
+
+When `save` is enabled, the selected search result is stored in the global data store. Other components (such as charts or tables) can reference this value to filter or update their displayed data. For example, a SearchBar with `id: "mmtrbc_gene"` makes the selected gene available to any component that reads from the `mmtrbc_gene` global key.
+
+---
+
 ## List
 
-The List component is used to display a list of genes.
+The List component displays a managed list of items. Users can add items (typically from a SearchBar), remove individual items, or clear the entire list. It is commonly used to build a working set of genes or other entities for downstream analysis.
 
 ### Properties
 
-The List component has the following properties:
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `type` | string | Yes | Must be `"List"`. |
+| `id` | string | Yes | Unique identifier for the component. |
+| `row` | int | No | The row in which the component is displayed. |
+| `col` | int | No | The column in which the component is displayed. |
+| `rowspan` | int | No | The number of rows the component spans. |
+| `title` | string | No | Label displayed above the list. |
+| `btn` | object | No | Configuration for action buttons (add, remove, clear). See below. |
+| `style` | object | No | CSS styles applied to the component container. |
 
--   `type` (string): The type of the component, in this case `List`.
--   `id` (string): The unique identifier of the component.
--   `row` (int): The row in which the component is to be displayed.
--   `col` (int): The column in which the component is to be displayed.
--   `rowspan` (int): The number of rows the component is to span.
--   `btn` (object): The button of the component.
--   `style` (object): The style of the component.
--   `title` (string): The title of the component.
+#### Button Properties
 
-### example
+Each button (`add`, `remove`, `clear`) accepts the following:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `text` | string | Label displayed on the button. |
+| `show` | boolean | Whether the button is visible. |
+| `style` | object | CSS styles for the button. |
+| `msg` | string | Confirmation or success message (used by `clear`). |
+| `addfrom` | string | ID of the SearchBar component to pull values from (used by `add`). |
+
+### Example
 
 ```json
-  {
-            "id": "genelist",
-            "type": "List",
-            "row": 2,
-            "col": 1,
-            "rowspan": 3,
-            "btn": {
-                "add": {
-                    "text": "Add",
-                    "show": true,
-                    "style": {
-                        "color": "white",
-                        "backgroundColor": "#FF8E8E",
-                        "fontSize": "12px",
-                        "border": "none",
-                        "cursor": "pointer"
-                    },
-                    "addfrom": "mmtrbc_gene"
-                },
-                "clear": {
-                    "text": "Clear",
-                    "show": true,
-                    "msg": "Successfully cleared the list",
-                    "style": {
-                    }
-                },
-                "remove": {
-                    "show": true,
-                    "style": {
-                        "color": "white",
-                        "backgroundColor": "#f44336",
-                    }
-                }
+{
+    "id": "genelist",
+    "type": "List",
+    "row": 2,
+    "col": 1,
+    "rowspan": 3,
+    "btn": {
+        "add": {
+            "text": "Add",
+            "show": true,
+            "style": {
+                "color": "white",
+                "backgroundColor": "#FF8E8E",
+                "fontSize": "12px",
+                "border": "none",
+                "cursor": "pointer"
+            },
+            "addfrom": "mmtrbc_gene"
+        },
+        "clear": {
+            "text": "Clear",
+            "show": true,
+            "msg": "Successfully cleared the list",
+            "style": {}
+        },
+        "remove": {
+            "show": true,
+            "style": {
+                "color": "white",
+                "backgroundColor": "#f44336"
             }
         }
+    }
+}
 ```
+
+### Interaction with Other Components
+
+The List component connects to a SearchBar through the `addfrom` property on the `add` button. In the example above, `"addfrom": "mmtrbc_gene"` pulls the currently selected value from the SearchBar with `id: "mmtrbc_gene"`. The list contents can then be consumed by visualization components that need a set of items to display.
+
+---
 
 ## RatioBox
 
-The RatioBox component is used to display a ratio box on the page.
+The RatioBox component renders a group of radio buttons, allowing the user to select one option from a predefined set. The selected value is stored in the global data store so that other components can react to the user's choice.
 
 ### Properties
 
-The RatioBox component has the following properties:
-
--   `type` (string): The type of the component, in this case `RatioBox`.
--   `id` (string): The unique identifier of the component.
--   `row` (int): The row in which the component is to be displayed.
--   `col` (int): The column in which the component is to be displayed.
--   `choice` (array): The choice of the component.
--   `style` (object): The style of the component.
--   `val` (string): Will save the choices to the name of global variable.
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `type` | string | Yes | Must be `"RatioBox"`. |
+| `id` | string | Yes | Unique identifier for the component. |
+| `row` | int | No | The row in which the component is displayed. |
+| `col` | int | No | The column in which the component is displayed. |
+| `title` | string | No | Label displayed above the radio buttons. |
+| `choice` | array | Yes | Array of strings representing the available options. |
+| `val` | string | Yes | Name of the global variable where the selected choice is stored. |
+| `style` | object | No | CSS styles applied to the component container. |
 
 ### Example
 
@@ -140,3 +169,15 @@ The RatioBox component has the following properties:
     "title": "Colour by"
 }
 ```
+
+### Interaction with Other Components
+
+The selected option is saved to the global variable specified by `val`. In the example above, choosing "Cell Type" or "Stage" updates the `chrom_colour` global variable. Visualization components (such as scatter plots or UMAP charts) can reference this variable to change their color mapping dynamically.
+
+---
+
+## See Also
+
+- [HTML Component](components/html.md) -- Render raw HTML content in page layouts.
+- [Markdown Component](components/markdown.md) -- Render Markdown content in page layouts.
+- [Page Mode Overview](bindData/bindPage.md) -- How components are arranged in page layouts.

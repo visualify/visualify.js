@@ -1,10 +1,13 @@
 {
     "name": "visualifyjs",
-    "version": "2.5.3",
+    "version": "3.0.0",
     "main": "dist/visualify.js",
     "homepage": "https://visualify.pharmacy.arizona.edu",
     "license": "GNU General Public License v3.0",
     "description": "Visualify is a web-based platform for visualizing and analyzing large-scale omics data.",
+    "bin": {
+        "visualify": "./src/cli/index.js"
+    },
     "keywords": [
         "visualization",
         "analysis",
@@ -12,32 +15,49 @@
         "platform"
     ],
     "dependencies": {
+        "@react-three/drei": "^9.0.0",
+        "@react-three/fiber": "^8.15.0",
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^13.4.0",
         "@testing-library/user-event": "^13.5.0",
         "ace-builds": "^1.32.0",
         "axios": "^1.6.2",
         "bootstrap": "^5.3.2",
+        "chalk": "^4.1.2",
+        "chokidar": "^3.5.3",
+        "commander": "^11.1.0",
+        "docsify": "^4.13.1",
+        "docsify-cli": "^4.4.4",
         "dompurify": "^3.0.6",
         "echarts": "^5.4.3",
         "echarts-for-react": "^3.0.2",
+        "echarts-gl": "^2.0.9",
+        "express": "^4.18.2",
         "hilbert": "^2.0.0",
+        "i18next": "^25.8.5",
+        "i18next-browser-languagedetector": "^8.2.0",
         "lodash": "^4.17.21",
+        "plotly.js": "^3.3.1",
         "react": "^18.2.0",
         "react-ace": "^10.1.0",
         "react-bootstrap": "^2.9.1",
         "react-dom": "^18.2.0",
+        "react-i18next": "^16.5.4",
         "react-markdown": "^9.0.1",
         "react-plotly.js": "^2.6.0",
         "react-router-dom": "^6.20.0",
         "react-scripts": "5.0.1",
         "react-select": "^5.8.0",
+        "react-toastify": "^11.0.5",
         "remark": "^15.0.1",
         "remark-html": "^16.0.1",
-        "web-vitals": "^2.1.4"
+        "three": "^0.160.0",
+        "web-vitals": "^2.1.4",
+        "ws": "^8.14.2"
     },
     "scripts": {
         "rollup": "rollup -c",
+        "rollup:dev": "NODE_ENV=development rollup -c",
         "start": "react-app-rewired start",
         "build": "npm run rollup & react-app-rewired build",
         "test": "react-app-rewired test",
@@ -79,6 +99,8 @@
         "rollup": "^2.79.1",
         "rollup-plugin-css-only": "^4.5.2",
         "rollup-plugin-polyfill-node": "^0.13.0",
-        "rollup-plugin-postcss": "^4.0.2"
+        "rollup-plugin-postcss": "^4.0.2",
+        "rollup-plugin-visualizer": "^6.0.5",
+        "typescript": "^4.9.5"
     }
 }

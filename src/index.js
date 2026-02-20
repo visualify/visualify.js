@@ -12,6 +12,26 @@ import Recharts from './core/recharts';
 import CreateApp from './core/visualify';
 import LiveEditor from './core/liveEditor';
 
+// Runtime check for required CDN dependencies
+if (typeof window !== 'undefined') {
+	if (typeof window.echarts === 'undefined') {
+		console.warn(
+			'[Visualify] ECharts not found. Charts will not render.\n' +
+			'Add this before visualify.js:\n' +
+			'<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>\n' +
+			'Or use visualify-loader.js which auto-loads CDN dependencies.'
+		);
+	}
+	if (typeof window.Plotly === 'undefined') {
+		console.warn(
+			'[Visualify] Plotly not found. Plotly charts will not render.\n' +
+			'Add this before visualify.js:\n' +
+			'<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>\n' +
+			'Or use visualify-loader.js which auto-loads CDN dependencies.'
+		);
+	}
+}
+
 try {
 	if (window.$visualify) {
 		if (process.env.NODE_ENV === 'development') {

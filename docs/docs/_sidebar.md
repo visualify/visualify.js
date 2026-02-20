@@ -1,11 +1,11 @@
--   Getting started
+-   Getting Started
 
     -   [Introduction](/README.md)
-    -   [Quick start](/quickstart.md)
-    -   [More pages](/more-pages.md)
+    -   [Quick Start](/quickstart.md)
+    -   [Docsify Plugin](/docsify-plugin.md)
 
--   Visualify.Recharts
-    
+-   Charts (2D)
+
     -   [Usage](/rechart-basic-usage.md)
     -   [Attributes](/rechart-attributes.md)
     -   [Line Chart](/Rechart/line.md)
@@ -13,8 +13,12 @@
     -   [Pie Chart](/Rechart/pie.md)
     -   [Radar Chart](/Rechart/radar.md)
     -   [Funnel Chart](/Rechart/funnel.md)
-    
-  
+    -   [Scatter Chart](/Rechart/scatter.md)
+
+-   Charts (3D)
+
+    -   [3D Visualization](/3d-visualization.md)
+
 -   Page Mode
 
     -   [ScatterL](/components/scatterL.md)
@@ -29,6 +33,13 @@
 
     -   [Configuration](/configuration.md)
     -   [Theme](/theme.md)
+
+-   Developer Experience
+
+    -   [Hot Module Replacement](/hmr.md)
+    -   [TypeScript](/typescript.md)
+    -   [Visual Editor](/visual-editor.md)
+    -   [Internationalization](/i18n.md)
 
 -   Guide
 

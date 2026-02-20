@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-12-01 14:18:43
- * @FilePath     : /visualifyjs/src/core/libs/echarts.js
+ * @FilePath     : /visualify.js/src/core/modules/echarts.js
  * @Description  :
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
  */
@@ -63,7 +63,6 @@ const ReCharts = forwardRef(({ options, style, onEvents = {} }, ref) => {
 			ref={chartRef}
 			option={options}
 			style={style}
-			onEvents={onEvents}
 		/>
 	);
 });

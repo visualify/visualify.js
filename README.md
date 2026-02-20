@@ -1,59 +1,94 @@
-## Visualify
+## Visualify.js
 
-> The magical data portal generator
->
-> Best mate for [Docsify](https://docsify.js.org/) to be deployed on GitHub
-> Pages
+> The magical data portal generator &mdash; best mate for [Docsify](https://docsify.js.org/)
 
-## What it is
+Visualify takes the complexity out of generating data portal websites. Forget about manually writing React components or generating static HTML files. Visualify smartly loads and parses your configuration and data API, allowing you to provide the information directly in a JavaScript file.
 
-Visualify takes the complexity out of generating data portal websites, which is
-inspired by [docsify](https://docsify.js.org/). Forget about manually writing
-React components or generating static HTML files. Visualify smartly loads and
-parses your configuration and data API, allowing you to provide the information
-directly in a JavaScript file. The result? Your data is beautifully displayed
-and visualized as a website, all with minimal effort on your part.
+[Quick Start](https://visualify.pharmacy.arizona.edu/#/quickstart) | [Documentation](https://visualify.pharmacy.arizona.edu/) | [Changelog](docs/CHANGELOG.md)
 
-To get started, simply create an `index.html` file and deploy it on GitHub Pages
-or your personal server.
+## Usage
 
-Here is the [Quick Start](https://visualify.pharmacy.arizona.edu/#/quickstart) guide, which providing detailed
-instructions to help you begin.
+### Charts Mode (Docsify integration)
 
-## Pages Mode Vs. Reacharts Mode
+Embed interactive charts in your Docsify documentation:
 
-Visualify supports two modes: `pages` and `reacharts`. The `pages` mode is
-designed for creating a data portal website as the front router, while the
-`reacharts` mode is designed for creating a single page with multiple plots. The
-`reacharts` mode is the best mate for [Docsify](https://docsify.js.org/) to show
-the plots of your data.
+```html
+<script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@release/dist/visualify-loader.js"></script>
+<script>
+  $visualify = { mode: 'charts' }
 
-Pages mode will be the default mode if you don't specify the mode in the
-configuration. You can specify the mode in the configuration file by setting the
-`mode` field to `pages` or `reacharts`.
-
-```json
-{
-    "mode": "pages"
-}
+  // Mount a chart
+  new $visualify.Recharts({
+    type: 'line',
+    title: 'Example',
+    data: { 'series1': [300, 280, 250, 260, 270] },
+  }).mount('#chart')
+</script>
 ```
+
+### Pages Mode (Data portal)
+
+Build a full data portal website from JSON configuration:
+
+```html
+<script>
+  $visualify = {
+    el: '#root',
+    mode: 'pages',
+    name: 'My Data Portal',
+    nav: true,
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@release/dist/visualify-loader.js"></script>
+```
+
+### CLI
+
+```bash
+npm i -g visualifyjs
+
+visualify init my-project        # Initialize a new project
+visualify dev                    # Start dev server (auto-detect mode)
+visualify docs build             # Build static documentation
+visualify portal dev             # Start portal dev server
+visualify edit                   # Open visual editor
+```
+
+## Installation
+
+### Stable (npm)
+
+```bash
+npm install visualifyjs
+```
+
+### Beta (dev branch)
+
+Get the latest development build directly from GitHub:
+
+```bash
+npm install github:visualify/visualify.js#dev
+```
+
+Or via CDN (beta):
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@dev/dist/visualify-loader.js"></script>
+```
+
+> Beta builds are updated daily on the `dev` branch. For production use, install from npm.
 
 ## Features
 
--   **No Manual React Components**: Automatically handles the creation of React
-    components without the need for manual coding.
--   **Smart Configuration and Data Parsing**: Loads and parses your
-    configuration and data API, even if provided directly in a JavaScript file.
--   **Dynamic Website Visualization**: Transforms your data into a visually
-    appealing website on the fly.
--   **Easy Deployment**: Just create an `index.html` file with `*.json`
-    configuration and deploy it on GitHub Pages or your personal server.
--   **Best Mate for Docsify**: Visualify is the best mate for
-    [Docsify](https://docsify.js.org/) to show the plots of your data.
+- **Two modes**: Charts mode for Docsify integration, Pages mode for full data portals
+- **3D Visualization**: Scatter3D, Bar3D, Surface3D, Line3D via ECharts GL and Three.js
+- **Smart Configuration**: JSON-based configuration with TypeScript validation
+- **CDN Auto-loader**: Single `<script>` tag loads all dependencies automatically
+- **Internationalization**: 6 languages with RTL support
+- **Accessibility**: Keyboard navigation, ARIA labels, screen reader support
+- **Easy Deployment**: Deploy on GitHub Pages, personal server, or any static host
 
 ## Showcases
 
--   [MmTrBC](https://visualify.pharmacy.arizona.edu/MmTrBC/): Zhou, Yizhuo, Ying Yang, Lihao Guo, Jun Qian, Jian Ge, Debora Sinner, Hongxu Ding, Andrea Califano, and Wellington V. Cardoso. "Airway basal cells show regionally distinct potential to undergo metaplastic differentiation." Elife 11 (2022): e80083.
--   [EsoDev](https://visualify.pharmacy.arizona.edu/EsoDev/): Yang, Ying, Carmel Grace McCullough, Lucas Seninge, Lihao Guo, Woo-Joo Kwon, Yongchun Z. Zhang, Nancy Yanzhe Li et al. "A Spatiotemporal and Machine-Learning Platform Accelerates the Manufacturing of hPSC-derived Esophageal Mucosa." bioRxiv (2023): 2023-10.
-
-    
+- [MmTrBC](https://visualify.pharmacy.arizona.edu/MmTrBC/) - Airway basal cells metaplastic differentiation (Zhou et al., Elife 2022)
+- [EsoDev](https://visualify.pharmacy.arizona.edu/EsoDev/) - Esophageal mucosa spatiotemporal platform (Yang et al., bioRxiv 2023)

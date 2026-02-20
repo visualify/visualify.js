@@ -3,8 +3,10 @@ import DOMPurify from 'dompurify';
 import { Container, Row, Col } from 'react-bootstrap';
 import { ReactComponent as ICON } from '../../_media/icon.svg';
 import pkg from '../../../package.json';
+import { useTranslation } from 'react-i18next';
 
 function Vfooter({ config }) {
+	const { t } = useTranslation();
 	// Download -------------------------------------------------------------------------
 	const { download, download_style } = config;
 
@@ -26,7 +28,7 @@ function Vfooter({ config }) {
 		return (
 			<Row>
 				<Col>
-					<b style={{ marginRight: '1rem' }}>Download: </b>
+					<b style={{ marginRight: '1rem' }}>{t('footer.download')} </b>
 					{Object.keys(download).map((key) => (
 						<a
 							key={key}
@@ -81,9 +83,15 @@ function Vfooter({ config }) {
 					className='mb-0'
 					dangerouslySetInnerHTML={{
 						__html: DOMPurify.sanitize(
-							`${copyright} Copyright © ${new Date().getFullYear()} powered by ${
-								pkg.name
-							}@<a href="${pkg.homepage}">${pkg.version}</a>`,
+							t('footer.copyright', {
+								name: copyright,
+								year: new Date().getFullYear(),
+								app: pkg.name,
+								version: pkg.version,
+							}).replace(
+								'@',
+								`@<a href="${pkg.homepage}">`
+							) + '</a>'
 						),
 					}}
 				/>

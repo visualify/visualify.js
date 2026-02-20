@@ -33,7 +33,7 @@ config.corner = {
 config.auto2top = true;
 
 // basePath (String) | Base path of the website. You can set it to another directory or another domain name.
-config.basePath = 'https://visualify.github.io/visualify.js/docs/';
+config.basePath = 'docs/';
 
 // autoHeader (Boolean) | Default: false | prepend a header to the page before converting it to HTML.
 config.autoHeader = false;
@@ -409,9 +409,8 @@ config.tabs = {
 
 config.latex = {
 	inlineMath: [
-		['$', '$'],
 		['\\(', '\\)'],
-	], // default
+	], // Removed ['$', '$'] — conflicts with JavaScript code blocks containing $docsify/$visualify
 	displayMath: [['$$', '$$']], // default
 };
 
@@ -446,3 +445,186 @@ config['flexible-alerts'] = {
 config.mermaidConfig = {
 	querySelector: '.mermaid',
 };
+
+// Visualify code block plugin: converts ```visualify blocks to interactive charts.
+config.plugins = (config.plugins || []).concat([
+	function visualifyCodeBlockPlugin(hook) {
+		// Process markdown before Docsify renders it
+		hook.beforeEach(function(content) {
+			if (!content || content.indexOf('```visualify') === -1) return content;
+
+			// Preserve <pre> wrapped blocks (documentation examples) from being converted
+			var preBlocks = [];
+			content = content.replace(/<pre[^>]*>[\s\S]*?<\/pre>/gi, function(match) {
+				preBlocks.push(match);
+				return '<!--VISUALIFY_PRE_' + (preBlocks.length - 1) + '-->';
+			});
+
+			// Replace only bare ```visualify blocks with chart container HTML
+			content = content.replace(/```visualify\n([\s\S]*?)```/g, function(match, code) {
+				try {
+					var config = JSON.parse(code.trim());
+					var id = 'visualify-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+					var configJson = JSON.stringify(config).replace(/"/g, '&quot;');
+					var type = config.type || 'scatter';
+					return '<div class="visualify-chart-wrapper" data-visualify-type="' + type + '">' +
+						'<div id="' + id + '" class="visualify-chart-container" ' +
+						'data-visualify="' + configJson + '" ' +
+						'style="width: 100%; min-height: 400px;"></div></div>';
+				} catch (e) {
+					return '<div style="padding:16px;border:1px solid #ff4d4f;border-radius:4px;background:#fff2f0;color:#cf1322;margin:16px 0;">' +
+						'<strong>Visualify Error:</strong> ' + e.message + '</div>';
+				}
+			});
+
+			// Restore preserved <pre> blocks
+			content = content.replace(/<!--VISUALIFY_PRE_(\d+)-->/g, function(match, idx) {
+				return preBlocks[parseInt(idx, 10)];
+			});
+
+			return content;
+		});
+
+		// Mount charts after Docsify finishes rendering each page
+		hook.doneEach(function() {
+			var Recharts = window.$visualify && window.$visualify.Recharts;
+			if (!Recharts) return;
+
+			var elements = document.querySelectorAll('[data-visualify]:not([data-visualify-mounted="true"])');
+			elements.forEach(function(el) {
+				try {
+					var config = JSON.parse(el.getAttribute('data-visualify') || '{}');
+					new Recharts(config).mount(el);
+					el.setAttribute('data-visualify-mounted', 'true');
+				} catch (e) {
+					console.error('[VisualifyDocs] Failed to mount chart:', e);
+				}
+			});
+		});
+	},
+]);
+
+// Ensure 3D docs examples mount reliably after Docsify route rendering.
+config.plugins = (config.plugins || []).concat([
+	function(hook) {
+		const mounted = {
+			scatter: false,
+			bar: false,
+			surface: false,
+		};
+
+		const fallbackConfigs = {
+			scatter: {
+				type: 'scatter3d',
+				title: '3D Scatter Plot Example',
+				data: {
+					x: [1, 2, 3, 4, 5],
+					y: [10, 15, 8, 20, 12],
+					z: [5, 8, 12, 7, 9],
+				},
+				xAxis3D: { name: 'X Dimension', type: 'value' },
+				yAxis3D: { name: 'Y Dimension', type: 'value' },
+				zAxis3D: { name: 'Z Dimension', type: 'value' },
+			},
+			bar: {
+				type: 'bar3d',
+				title: '3D Bar Chart Example',
+				data: [
+					[0, 0, 10], [0, 1, 20], [0, 2, 15],
+					[1, 0, 25], [1, 1, 30], [1, 2, 20],
+					[2, 0, 15], [2, 1, 25], [2, 2, 35],
+				],
+				xAxis3D: { type: 'category', data: ['A', 'B', 'C'] },
+				yAxis3D: { type: 'category', data: ['X', 'Y', 'Z'] },
+				zAxis3D: { type: 'value' },
+			},
+			surface: {
+				type: 'surface3d',
+				title: '3D Surface Plot Example',
+				data: {
+					x: [-2, -1, 0, 1, 2],
+					y: [-2, -1, 0, 1, 2],
+					z: [
+						[0.1, 0.2, 0.3, 0.2, 0.1],
+						[0.2, 0.4, 0.6, 0.4, 0.2],
+						[0.3, 0.6, 1.0, 0.6, 0.3],
+						[0.2, 0.4, 0.6, 0.4, 0.2],
+						[0.1, 0.2, 0.3, 0.2, 0.1],
+					],
+				},
+				xAxis3D: { type: 'value' },
+				yAxis3D: { type: 'value' },
+				zAxis3D: { type: 'value' },
+			},
+		};
+
+		function is3DRoute() {
+			return /#\/3d-visualization/.test(window.location.hash || '');
+		}
+
+		function mount3DExamples(retryCount) {
+			const attempts = retryCount || 0;
+			const maxAttempts = 80;
+			const delayMs = 250;
+
+			if (!is3DRoute()) return;
+
+			const Recharts = window.$visualify && window.$visualify.Recharts;
+			if (!Recharts) {
+				if (attempts < maxAttempts) {
+					setTimeout(function() { mount3DExamples(attempts + 1); }, delayMs);
+				}
+				return;
+			}
+
+			const scatterEl = document.querySelector('#scatter3d-example');
+			const barEl = document.querySelector('#bar3d-example');
+			const surfaceEl = document.querySelector('#surface3d-example');
+
+			try {
+				if (!mounted.scatter && scatterEl) {
+					const scatterConfig = window.scatter3dExample || fallbackConfigs.scatter;
+					new Recharts(scatterConfig).mount('#scatter3d-example');
+					mounted.scatter = true;
+				}
+			} catch (err) {
+				console.error('[3D Docs] Failed to mount Scatter3D:', err);
+			}
+
+			try {
+				if (!mounted.bar && barEl) {
+					const barConfig = window.bar3dExample || fallbackConfigs.bar;
+					new Recharts(barConfig).mount('#bar3d-example');
+					mounted.bar = true;
+				}
+			} catch (err) {
+				console.error('[3D Docs] Failed to mount Bar3D:', err);
+			}
+
+			try {
+				if (!mounted.surface && surfaceEl) {
+					const surfaceConfig = window.surface3dExample || fallbackConfigs.surface;
+					new Recharts(surfaceConfig).mount('#surface3d-example');
+					mounted.surface = true;
+				}
+			} catch (err) {
+				console.error('[3D Docs] Failed to mount Surface3D:', err);
+			}
+
+			if (attempts < maxAttempts && (!mounted.scatter || !mounted.bar || !mounted.surface)) {
+				setTimeout(function() { mount3DExamples(attempts + 1); }, delayMs);
+			}
+		}
+
+		hook.doneEach(function() {
+			// Reset mount state when docs route is re-rendered.
+			mounted.scatter = false;
+			mounted.bar = false;
+			mounted.surface = false;
+
+			setTimeout(function() { mount3DExamples(0); }, 0);
+			setTimeout(function() { mount3DExamples(0); }, 600);
+			setTimeout(function() { mount3DExamples(0); }, 1500);
+		});
+	},
+]);

@@ -1,8 +1,22 @@
 // Scatter.js
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef, useCallback, useRef } from 'react';
 import ReCharts from '../modules/echarts';
+import { useTranslation } from 'react-i18next';
+import {
+	generateChartAriaAttributes,
+	formatDataForScreenReader,
+	generateDataTable,
+	announceToScreenReader,
+	generateCSV,
+	downloadCSV,
+} from '../../a11y/aria-labels';
+import { useChartKeyboardNav } from '../../a11y/keyboard-nav';
+import { validateChartColors, applyAccessibleColors } from '../../a11y/color-contrast';
+import { formatAxisLabel } from '../../i18n/formatters';
 
 const Scatter = forwardRef(({ props, style }, ref) => {
+	const { t } = useTranslation();
+
 	const getOptions = (config) => {
 		const _dataZoom = {
 			inside: [
@@ -65,16 +79,19 @@ const Scatter = forwardRef(({ props, style }, ref) => {
 		}
 		//Tooltip
 		if (config.tooltip) {
-			console.log(config.tooltip);
+			options.tooltip = { ...options.tooltip, ...config.tooltip };
 		}
 		// xAxis
 		if (config.xAxis) {
 			options.xAxis = [
 				{
-					name: config.labels?.x ?? '',
+					name: config.labels?.x ?? t('charts.scatter') + ' X',
 					type: 'value',
 					nameGap: 25,
 					nameLocation: 'middle',
+					axisLabel: {
+						formatter: (value) => formatAxisLabel(value, 'value'),
+					},
 					...config.xAxis,
 				},
 			];
@@ -83,10 +100,13 @@ const Scatter = forwardRef(({ props, style }, ref) => {
 		if (config.yAxis) {
 			options.yAxis = [
 				{
-					name: config.labels?.y ?? '',
+					name: config.labels?.y ?? t('charts.scatter') + ' Y',
 					type: 'value',
 					nameGap: 25,
 					nameLocation: 'middle',
+					axisLabel: {
+						formatter: (value) => formatAxisLabel(value, 'value'),
+					},
 					...config.yAxis,
 				},
 			];
@@ -108,47 +128,68 @@ const Scatter = forwardRef(({ props, style }, ref) => {
 		options.xAxis = config.xAxis
 			? [
 					{
-						name: config.labels?.x ?? '', // Add optional chaining here
+						name: config.labels?.x ?? t('charts.scatter') + ' X',
 						type: 'value',
 						nameGap: 25,
 						nameLocation: 'middle',
+						axisLabel: {
+							formatter: (value) => formatAxisLabel(value, 'value'),
+						},
 						...config.xAxis,
 					},
 			  ]
 			: [
 					{
 						type: 'value',
+						axisLabel: {
+							formatter: (value) => formatAxisLabel(value, 'value'),
+						},
 					},
 			  ];
 		options.yAxis = config.yAxis
 			? [
 					{
-						name: config.labels?.y ?? '', // And here
+						name: config.labels?.y ?? t('charts.scatter') + ' Y',
 						type: 'value',
 						nameGap: 25,
 						nameLocation: 'middle',
+						axisLabel: {
+							formatter: (value) => formatAxisLabel(value, 'value'),
+						},
 						...config.yAxis,
 					},
 			  ]
 			: [
 					{
 						type: 'value',
+						axisLabel: {
+							formatter: (value) => formatAxisLabel(value, 'value'),
+						},
 					},
 			  ];
 		if (config.is3D) {
 			options.xAxis3D = {
-				name: config.xAxis3D?.name || 'X',
+				name: config.xAxis3D?.name || t('charts.scatter3d') + ' X',
 				type: 'value',
+				axisLabel: {
+					formatter: (value) => formatAxisLabel(value, 'value'),
+				},
 				...config.xAxis3D,
 			};
 			options.yAxis3D = {
-				name: config.yAxis3D?.name || 'Y',
+				name: config.yAxis3D?.name || t('charts.scatter3d') + ' Y',
 				type: 'value',
+				axisLabel: {
+					formatter: (value) => formatAxisLabel(value, 'value'),
+				},
 				...config.yAxis3D,
 			};
 			options.zAxis3D = {
-				name: config.zAxis3D?.name || 'Z',
+				name: config.zAxis3D?.name || t('charts.scatter3d') + ' Z',
 				type: 'value',
+				axisLabel: {
+					formatter: (value) => formatAxisLabel(value, 'value'),
+				},
 				...config.zAxis3D,
 			};
 			options.grid3D = {
@@ -160,26 +201,189 @@ const Scatter = forwardRef(({ props, style }, ref) => {
 		}
 		if (config.color) {
 			options.color = config.color;
-			console.log(options.color);
 		}
 		return options;
 	};
 
 	const { config } = props;
-	const [options, setOptions] = useState(getOptions(config));
+	const chartId = props.id || `scatter-chart-${Math.random().toString(36).substr(2, 9)}`;
+	const descriptionId = `${chartId}-description`;
+	const tableId = `${chartId}-data-table`;
+
+	// Accessibility: Validate and fix colors
+	const accessibleConfig = React.useMemo(() => {
+		const validation = validateChartColors(config);
+		if (!validation.valid && config.a11y?.autoFix !== false) {
+			return applyAccessibleColors(config);
+		}
+		return config;
+	}, [config]);
+
+	const [options, setOptions] = useState(getOptions(accessibleConfig));
+	const [focusedDataPoint, setFocusedDataPoint] = useState(null);
+	const chartRef = useRef(null);
+
+	// Get chart data for accessibility
+	const chartData = React.useMemo(() => {
+		return accessibleConfig.data || accessibleConfig.series?.[0]?.data || [];
+	}, [accessibleConfig]);
+
+	// Keyboard navigation
+	const {
+		containerRef,
+		handleKeyDown,
+		handleFocus,
+		focusedIndex,
+	} = useChartKeyboardNav({
+		data: chartData,
+		config: accessibleConfig,
+		onFocusChange: (index, dataPoint) => {
+			setFocusedDataPoint(dataPoint);
+			// Highlight in chart if possible
+			if (chartRef.current) {
+				const chart = chartRef.current.getEchartsInstance?.();
+				if (chart) {
+					chart.dispatchAction({
+						type: 'highlight',
+						seriesIndex: 0,
+						dataIndex: index,
+					});
+				}
+			}
+		},
+		onActivate: (index, dataPoint) => {
+			// Trigger click event on chart
+			if (chartRef.current) {
+				const chart = chartRef.current.getEchartsInstance?.();
+				if (chart) {
+					chart.dispatchAction({
+						type: 'showTip',
+						seriesIndex: 0,
+						dataIndex: index,
+					});
+				}
+			}
+		},
+	});
+
+	// Generate ARIA attributes
+	const ariaAttributes = React.useMemo(() =>
+		generateChartAriaAttributes(accessibleConfig, 'scatter', chartId),
+		[accessibleConfig, chartId]
+	);
+
+	// Generate data description
+	const dataDescription = React.useMemo(() =>
+		formatDataForScreenReader(chartData, accessibleConfig, 'scatter'),
+		[chartData, accessibleConfig]
+	);
+
+	// Generate data table for screen readers
+	const dataTable = React.useMemo(() =>
+		generateDataTable(chartData, accessibleConfig, 'scatter'),
+		[chartData, accessibleConfig]
+	);
+
+	// Handle CSV download
+	const handleDownloadData = useCallback(() => {
+		const csv = generateCSV(chartData, accessibleConfig);
+		if (csv) {
+			downloadCSV(csv, `${accessibleConfig.title || 'scatter-chart'}-data.csv`);
+			announceToScreenReader('Data downloaded as CSV file', 'polite');
+		}
+	}, [chartData, accessibleConfig]);
+
+	// Announce chart load
+	useEffect(() => {
+		if (accessibleConfig.a11y?.announceLoad !== false) {
+			announceToScreenReader(
+				`${ariaAttributes['aria-label']}. Use arrow keys to navigate data points. Press Enter to select.`,
+				'polite'
+			);
+		}
+	}, []);
+
 	// update options when config changes
 	useEffect(() => {
-		setOptions(getOptions(config));
-	}, [config]);
+		setOptions(getOptions(accessibleConfig));
+	}, [accessibleConfig]);
 
 	return (
 		<div
-			id={props.id}
-			style={style}>
+			id={chartId}
+			ref={containerRef}
+			style={style}
+			className="visualify-chart visualify-scatter-chart"
+			{...ariaAttributes}
+			onKeyDown={handleKeyDown}
+			onFocus={handleFocus}
+			data-testid="scatter-chart"
+		>
+			{/* Screen reader description */}
+			<div id={descriptionId} className="sr-only">
+				{dataDescription}
+				{accessibleConfig.description && (
+					<span>. {accessibleConfig.description}</span>
+				)}
+			</div>
+
+			{/* Screen reader data table */}
+			{dataTable.rows.length > 0 && (
+				<table id={tableId} className="sr-only">
+					<caption>{dataTable.caption} - Data Table</caption>
+					<thead>
+						<tr>
+							{dataTable.headers.map((header, i) => (
+								<th key={i} scope="col">{header}</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{dataTable.rows.map((row) => (
+							<tr key={row.id}>
+								{row.cells.map((cell, i) => (
+									<td key={i}>{cell}</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
+
+			{/* CSV download link for screen readers */}
+			{accessibleConfig.a11y?.enableDownload !== false && chartData.length > 0 && (
+				<button
+					className="sr-only"
+					onClick={handleDownloadData}
+					aria-label="Download chart data as CSV"
+					tabIndex={-1}
+				>
+					Download Data
+				</button>
+			)}
+
+			{/* Live region for updates */}
+			<div
+				aria-live="polite"
+				aria-atomic="true"
+				className="sr-only"
+				id={`${chartId}-live-region`}
+			>
+				{focusedDataPoint && `Focused: ${JSON.stringify(focusedDataPoint)}`}
+			</div>
+
 			<ReCharts
-				ref={ref}
+				ref={(el) => {
+					chartRef.current = el;
+					if (typeof ref === 'function') {
+						ref(el);
+					} else if (ref) {
+						ref.current = el;
+					}
+				}}
 				options={options}
-				style={{ width: config.chartWidth, height: config.chartHeight }}
+				style={{ width: accessibleConfig.chartWidth, height: accessibleConfig.chartHeight }}
+				aria-hidden="true"
 			/>
 		</div>
 	);

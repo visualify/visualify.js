@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-11-06 17:23:59
- * @FilePath     : /visualifyjs/src/core/components/scatterL.js
+ * @FilePath     : /visualify.js/src/core/components/scatterL.js
  * @Description  :
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
  */
@@ -30,21 +30,52 @@ function ScatterBio({ props, style }) {
 	// Store the previous sharedData value using a ref
 	const previousSharedDataRef = useRef(null);
 
+	// Use refs for sharedData and props to access latest values without depending on them
+	const sharedDataRef = useRef(sharedData);
+	sharedDataRef.current = sharedData;
+	const propsRef = useRef(props);
+	propsRef.current = props;
+
+	// Extract stable dependency keys from props.config.api and colourby
+	// These are the only sharedData keys this component actually reads
+	const apiConfig = props.config?.api;
+	const colourbyKey = props.config?.colourby;
+	const apiVals = apiConfig
+		? Object.values(apiConfig).map((attr) => attr.val).sort().join(',')
+		: '';
+	// Build a serialized snapshot of the specific sharedData values we depend on
+	const relevantKeys = [];
+	if (apiConfig) {
+		Object.values(apiConfig).forEach((attr) => {
+			if (attr.val) relevantKeys.push(attr.val);
+		});
+	}
+	if (colourbyKey) relevantKeys.push(colourbyKey);
+	const sharedDataSnapshot = JSON.stringify(
+		relevantKeys.reduce((acc, key) => {
+			acc[key] = sharedData[key];
+			return acc;
+		}, {}),
+	);
+
 	useEffect(() => {
-		let option = parseConfig(props);
-		console.log('option: ', option);
+		const currentProps = propsRef.current;
+		const currentSharedData = sharedDataRef.current;
+
+		let option = parseConfig(currentProps);
+		//console.log('option: ', option);
 		let fetched_dat = null;
 
 		// Check if the sharedData has changed
 		handleChartForSharedDataChange(
 			chartRef,
-			sharedData,
+			currentSharedData,
 			previousSharedDataRef,
 			() => {
-				option.xAxis.min = props?.echart?.xAxis?.min;
-				option.xAxis.max = props?.echart?.xAxis?.max;
-				option.yAxis.min = props?.echart?.yAxis?.min;
-				option.yAxis.max = props?.echart?.yAxis?.max;
+				option.xAxis.min = currentProps?.echart?.xAxis?.min;
+				option.xAxis.max = currentProps?.echart?.xAxis?.max;
+				option.yAxis.min = currentProps?.echart?.yAxis?.min;
+				option.yAxis.max = currentProps?.echart?.yAxis?.max;
 			},
 		);
 
@@ -52,31 +83,31 @@ function ScatterBio({ props, style }) {
 		const updatePlot = async () => {
 			try {
 				setLoading({ active: true, message: null });
-				validateConfig(props.config);
+				validateConfig(currentProps.config);
 				const myChart = initChart(chartRef, option);
-				if (props.config.simpleload)
-					handleSimplyLoad(props.config.simpleload);
+				if (currentProps.config.simpleload)
+					handleSimplyLoad(currentProps.config.simpleload);
 				else {
-					const ibox = props.config?.ibox ?? {
+					const ibox = currentProps.config?.ibox ?? {
 						xMin: -9999,
 						yMin: -9999,
 						xMax: 9999,
 						yMax: 9999,
 					};
 					fetched_dat = await handleAPI(
-						props.config,
-						sharedData,
+						currentProps.config,
+						currentSharedData,
 						ibox,
 					);
-					console.log(fetched_dat, 'fetched_dat');
+					//console.log(fetched_dat, 'fetched_dat');
 				}
 				var { series, legend, visualMap, title } = parseData(
 					fetched_dat,
-					props.config,
-					sharedData,
+					currentProps.config,
+					currentSharedData,
 				);
 				// Chart options
-				option.series = props?.echart?.series ?? series;
+				option.series = currentProps?.echart?.series ?? series;
 				option.legend = {
 					...option.legend,
 					...legend,
@@ -96,8 +127,8 @@ function ScatterBio({ props, style }) {
 					clearTimeout(zoomTimeout);
 					zoomTimeout = setTimeout(async () => {
 						await onDataZoom(
-							props,
-							sharedData,
+							currentProps,
+							sharedDataRef.current,
 							fetched_dat,
 							myChart,
 							option,
@@ -146,7 +177,9 @@ function ScatterBio({ props, style }) {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [props, sharedData]);
+		// Only re-run when relevant sharedData values actually change (serialized comparison)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sharedDataSnapshot, apiVals, colourbyKey]);
 
 	return (
 		<div

@@ -5,20 +5,50 @@ It is highly recommended to use `Docisfy` as a document framework and imports
 
 Insert the `visualify` script in your `index.html` file.
 
+**Option 1: Auto-loader (recommended)** — loads CDN dependencies automatically:
+
 ```html
 <head>
   ...
-  <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script>
-  <!-- or -->
-    <!-- script src="https://cdn.jsdelivr.net/npm/visualifyjs"></!-- -->
+  <script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@release/dist/visualify-loader.js"></script>
 </head>
 ```
 
-Or install `visualify.cli` globally, which helps initializing and previewing the
-website locally.
+**Option 2: Manual CDN setup** — for more control over dependency versions:
+
+```html
+<head>
+  ...
+  <!-- CDN dependencies (required) -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <!-- Optional: only if using plotly charts -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <!-- Visualify -->
+  <script src="https://cdn.jsdelivr.net/npm/visualifyjs"></script>
+</head>
+```
+
+**Beta channel** — get the latest development build:
+
+```html
+<!-- Beta: auto-loader from dev branch -->
+<script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@dev/dist/visualify-loader.js"></script>
+```
+
+Or install via npm from GitHub:
 
 ```bash
-npm i visualify.cli -g
+npm install github:visualify/visualify.js#dev
+```
+
+> Beta builds are updated daily on the `dev` branch. For production, use the stable options above.
+
+---
+
+Install the CLI globally for initializing and previewing sites locally:
+
+```bash
+npm i visualifyjs -g
 ```
 
 ## Initialize
@@ -88,9 +118,8 @@ create `index.html`:
         //...
       };
     </script>
-    <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script>
-    <!-- or -->
-    <!-- script src="https://cdn.jsdelivr.net/npm/visualifyjs"></!-- -->
+    <!-- Auto-loader: loads echarts/plotly from CDN automatically -->
+    <script src="https://cdn.jsdelivr.net/gh/visualify/visualify.js@release/dist/visualify-loader.js"></script>
   </body>
 </html>
 

@@ -1,3 +1,20 @@
+/* ============================================
+   Design Tokens
+   ============================================ */
+:root {
+    --v-accent: #4a90d9;
+    --v-accent-hover: #3a7bc8;
+    --v-accent-light: #e8f0fe;
+    --v-border: #e0e0e0;
+    --v-text: #333;
+    --v-text-secondary: #666;
+    --v-radius: 8px;
+    --v-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   Existing styles
+   ============================================ */
 .v-header .rainbow-text {
     background-image: linear-gradient( to right, rgb(198, 255, 221), rgb(251, 215, 134), rgb(247, 121, 125));
     -webkit-background-clip: text;
@@ -13,13 +30,321 @@
     font-weight: bold;
 }
 
+/* ============================================
+   Unified Control Title
+   ============================================ */
+.v-control-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--v-text);
+    margin: 0 0 8px 0;
+}
+
+/* ============================================
+   Timeline
+   ============================================ */
+.v-timeline {
+    position: relative;
+    padding: 8px 0 8px 28px;
+}
+
+.v-timeline-line {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--v-accent), var(--v-accent-hover), #7c5cbf);
+    border-radius: 3px;
+    opacity: 0.5;
+}
+
+/* Dot on the vertical line */
+.v-timeline-dot {
+    position: absolute;
+    left: -24px;
+    top: 14px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--v-accent);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+}
+
+.v-timeline-node:hover .v-timeline-dot {
+    transform: scale(1.25);
+    border-color: var(--v-accent-hover);
+    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.15);
+}
+
+.v-timeline-node.has-active .v-timeline-dot {
+    background: var(--v-accent);
+    border-color: var(--v-accent);
+    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.2);
+}
+
+/* Node card */
+.v-timeline-node {
+    position: relative;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Horizontal branch connector */
+.v-timeline-branch {
+    position: absolute;
+    left: -18px;
+    top: 19px;
+    height: 2px;
+    width: 18px !important;
+    background: var(--v-border);
+    transition: background 0.2s ease;
+}
+
+.v-timeline-node:hover .v-timeline-branch {
+    background: var(--v-accent);
+    opacity: 0.5;
+}
+
+/* Node content wrapper */
+.v-timeline-content {
+    width: 100%;
+    padding: 8px 12px;
+    background: #fafbfc;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.v-timeline-content:hover {
+    background: #fff;
+    border-color: var(--v-border);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.v-timeline-node.has-active .v-timeline-content {
+    background: #fff;
+    border-color: rgba(74, 144, 217, 0.25);
+    box-shadow: 0 2px 12px rgba(74, 144, 217, 0.08);
+}
+
+/* Stage label (E72, E78, etc.) */
+.v-timeline-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--v-accent);
+    margin-bottom: 6px;
+    user-select: none;
+}
+
+/* Button group for sub-items */
+.v-timeline-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* Sub-item chips */
+.v-timeline-btn {
+    padding: 4px 12px;
+    border: 1px solid var(--v-border);
+    border-radius: 16px;
+    background: #fff;
+    color: var(--v-text);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    line-height: 1.4;
+}
+
+.v-timeline-btn:hover {
+    background: var(--v-accent-light);
+    border-color: var(--v-accent);
+    color: var(--v-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(74, 144, 217, 0.15);
+}
+
+.v-timeline-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.v-timeline-btn.active {
+    background: linear-gradient(135deg, var(--v-accent), var(--v-accent-hover));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(74, 144, 217, 0.35);
+    font-weight: 600;
+}
+
+/* Single-node (no sub-items) clickable */
+.v-timeline-single {
+    padding: 4px 12px;
+    border: 1px solid var(--v-border);
+    border-radius: 16px;
+    background: #fff;
+    color: var(--v-text);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    line-height: 1.4;
+    display: inline-block;
+}
+
+.v-timeline-single:hover {
+    background: var(--v-accent-light);
+    border-color: var(--v-accent);
+    color: var(--v-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(74, 144, 217, 0.15);
+}
+
+.v-timeline-single:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.v-timeline-single.active {
+    background: linear-gradient(135deg, var(--v-accent), var(--v-accent-hover));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(74, 144, 217, 0.35);
+    font-weight: 600;
+}
+
+/* Custom scrollbar for timeline container */
+.v-timeline-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.v-timeline-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.v-timeline-scroll::-webkit-scrollbar-thumb {
+    background: var(--v-border);
+    border-radius: 4px;
+}
+
+.v-timeline-scroll::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* ============================================
+   Selection
+   ============================================ */
 .selection-box-container {
     max-width: 100%;
-    min-height: 100px;
+    min-height: 60px;
     height: auto;
+    padding: 12px 14px;
+    background: #fff;
+    border-radius: var(--v-radius);
+    border: 1px solid var(--v-border);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.selection-box-container:hover {
+    border-color: var(--v-accent);
+}
+
+.selection-box-container:focus-within {
+    border-color: var(--v-accent);
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+}
+
+.selection-box-container .v-control-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--v-text-secondary);
+    margin: 0 0 8px 2px;
 }
 
 .select-wrapper {
     max-width: 100%;
-    margin-bottom: 10px;
+}
+
+/* Multi-value tag pills */
+.select-wrapper .v-select__multi-value,
+.select-wrapper [class*="-multiValue"] {
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+/* Placeholder */
+.select-wrapper [class*="-placeholder"] {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+/* ============================================
+   SearchBar
+   ============================================ */
+.v-searchbar-container {
+    /* No forced background/border — layout controlled by JSON config style props */
+}
+
+.v-searchbar-wrapper {
+    position: relative;
+}
+
+.v-searchbar-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--v-text-secondary);
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.v-searchbar-wrapper::after {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: calc(50% + 6px);
+    width: 2px;
+    height: 6px;
+    background: var(--v-text-secondary);
+    transform: rotate(-45deg);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.v-searchbar-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--v-border);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--v-text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.v-searchbar-input::placeholder {
+    color: #aaa;
+}
+
+.v-searchbar-input:focus {
+    border-color: var(--v-accent);
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
 }

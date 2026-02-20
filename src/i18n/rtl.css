@@ -1,0 +1,183 @@
+/**
+ * RTL (Right-to-Left) Support Styles for Visualify.js
+ *
+ * This file provides RTL layout support for Arabic, Hebrew, and other RTL languages.
+ * Use CSS logical properties for automatic RTL adaptation.
+ */
+
+/* Base RTL direction */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Chart container RTL adjustments */
+[dir="rtl"] .visualify-chart,
+[dir="rtl"] .visualify-scatter-chart,
+[dir="rtl"] .visualify-bar-chart {
+  direction: ltr; /* Charts typically render LTR internally */
+}
+
+/* Header RTL adjustments */
+[dir="rtl"] .v-header .navbar-brand {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .v-header .rainbow-text {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+[dir="rtl"] .github-corner {
+  right: auto;
+  left: 0;
+  transform: scaleX(-1);
+}
+
+/* Navigation RTL adjustments */
+[dir="rtl"] #navtabs {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[dir="rtl"] .nav-item {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .nav-item:last-child {
+  margin-left: 0;
+}
+
+/* Footer RTL adjustments */
+[dir="rtl"] .v-footer {
+  text-align: right;
+}
+
+[dir="rtl"] .v-footer .list-inline {
+  padding-right: 0;
+}
+
+[dir="rtl"] .v-footer .list-inline-item {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* Form elements RTL adjustments */
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] textarea {
+  text-align: right;
+}
+
+[dir="rtl"] input[type="number"] {
+  text-align: left; /* Numbers are typically LTR */
+}
+
+/* Button RTL adjustments */
+[dir="rtl"] .btn {
+  direction: rtl;
+}
+
+[dir="rtl"] .btn i,
+[dir="rtl"] .btn svg {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* Modal RTL adjustments */
+[dir="rtl"] .modal-header .btn-close {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+[dir="rtl"] .modal-title {
+  text-align: right;
+}
+
+/* Dropdown RTL adjustments */
+[dir="rtl"] .dropdown-menu {
+  text-align: right;
+}
+
+[dir="rtl"] .dropdown-toggle::after {
+  margin-left: 0;
+  margin-right: 0.255em;
+}
+
+/* Tooltip RTL adjustments */
+[dir="rtl"] .tooltip {
+  text-align: right;
+}
+
+/* Table RTL adjustments */
+[dir="rtl"] table {
+  text-align: right;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* List RTL adjustments */
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-left: 0;
+  padding-right: 2rem;
+}
+
+/* Logical properties for modern browsers */
+.visualify-chart {
+  /* Use logical properties for margins */
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+}
+
+.v-header {
+  /* Use logical properties for padding */
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+
+.v-footer {
+  /* Use logical properties for text alignment */
+  text-align: start;
+}
+
+/* Chart axis labels for RTL */
+[dir="rtl"] .echarts-axis-label {
+  direction: ltr;
+}
+
+/* Reference list RTL adjustments */
+[dir="rtl"] .reference-list {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+[dir="rtl"] .reference-item {
+  text-align: right;
+}
+
+/* Loading spinner RTL adjustments */
+[dir="rtl"] .spinner-border,
+[dir="rtl"] .spinner-grow {
+  direction: ltr;
+}
+
+/* Accessibility: Respect user preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [dir="rtl"] .github-corner {
+    transition: none;
+  }
+}
+
+/* Print styles for RTL */
+@media print {
+  [dir="rtl"] .v-header,
+  [dir="rtl"] .v-footer {
+    direction: rtl;
+  }
+}

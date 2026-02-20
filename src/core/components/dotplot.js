@@ -378,7 +378,6 @@ const DotBio = ({ props, style }) => {
 				});
 			}
 
-			//console.log('DotBio: config', config);
 			// processing logic here...
 			setUpdatedProps((updatedProps) => ({
 				...updatedProps,
@@ -394,7 +393,8 @@ const DotBio = ({ props, style }) => {
 				setError(err);
 				setLoading(false);
 			});
-	}, [props, sharedData, debug]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sharedData, debug]);
 
 	if (loading) return 'Loading...';
 	if (error) return 'An error has occurred: ' + error.message;

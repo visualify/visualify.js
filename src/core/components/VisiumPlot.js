@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ScatterBio from './ScatterBio';
 import simplefetch from '../fetch/fetch';
 import { useAppContext } from '../appContext';
@@ -8,16 +8,40 @@ const VisiumPlot = ({ props, style }) => {
 	const { sharedData } = useAppContext();
 	const { debug } = props;
 
-	const [updatedProps, setUpdatedProps] = useState(props);
+	const [updatedProps, setUpdatedProps] = useState(() => ({
+		...props,
+		config: {
+			...props.config,
+			legend: false,
+		},
+	}));
+
+	// Use ref for sharedData/props to access latest without depending on them
+	const sharedDataRef = useRef(sharedData);
+	sharedDataRef.current = sharedData;
+	const propsRef = useRef(props);
+	propsRef.current = props;
+
+	// Extract stable keys
+	const { metaval, cellval, image: imageUrl } = props;
+	// Build snapshot of only the sharedData keys we depend on
+	const relevantKeys = [metaval, cellval].filter(Boolean);
+	const sharedDataSnapshot = JSON.stringify(
+		relevantKeys.reduce((acc, key) => {
+			acc[key] = sharedData[key];
+			return acc;
+		}, {}),
+	);
 
 	useEffect(() => {
-		const { metaval } = props;
+		const currentProps = propsRef.current;
+		const currentSharedData = sharedDataRef.current;
 
-		let section = sharedData[metaval] ?? [];
+		let section = currentSharedData[metaval] ?? [];
 		let VisiumProps = {
-			...props,
+			...currentProps,
 			config: {
-				...props.config,
+				...currentProps.config,
 				//visium_cell_fraction: "BC",
 				visualMap: {
 					calculable: true,
@@ -73,14 +97,12 @@ const VisiumPlot = ({ props, style }) => {
 			},
 		};
 
-		const { cellval } = props;
-
 		if (
 			cellval &&
-			sharedData[cellval] !== undefined &&
-			sharedData[cellval].length > 0
+			currentSharedData[cellval] !== undefined &&
+			currentSharedData[cellval].length > 0
 		) {
-			let selected_celltype = sharedData[cellval][0];
+			let selected_celltype = currentSharedData[cellval][0];
 			if (
 				selected_celltype === 'Default' ||
 				selected_celltype === 'None' ||
@@ -93,9 +115,9 @@ const VisiumPlot = ({ props, style }) => {
 				VisiumProps.config.visium_cell_fraction = null;
 			else {
 				VisiumProps.config.visium_cell_fraction =
-					sharedData[cellval][0];
+					currentSharedData[cellval][0];
 				VisiumProps.config.visualMap.text = [
-					'Likelihood of being a ' + sharedData[cellval][0],
+					'Likelihood of being a ' + currentSharedData[cellval][0],
 					'',
 				];
 			}
@@ -133,7 +155,7 @@ const VisiumPlot = ({ props, style }) => {
 			BufferImage(imageBuffer.data);
 		};
 
-		const { image } = props;
+		const { image } = currentProps;
 		if (section.length > 0) {
 			section = section[0];
 			VisiumProps.config.title = {
@@ -146,9 +168,13 @@ const VisiumPlot = ({ props, style }) => {
 					color: 'black',
 				},
 			};
+			// Always update props (for cell type changes etc.)
+			// Image fetch will update again with background when loaded
+			setUpdatedProps({ ...VisiumProps });
 			fetchImage();
 		}
-	}, [props, sharedData, debug]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sharedDataSnapshot, metaval, cellval, imageUrl, debug]);
 
 	return (
 		<>

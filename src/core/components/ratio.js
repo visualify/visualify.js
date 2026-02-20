@@ -49,6 +49,8 @@ function RatioBox({ props, style }) {
 	useEffect(() => {
 		if (val) {
 			setSharedData((prevSharedData) => {
+				// Skip update if the value is already the same
+				if (prevSharedData[val] === selectedChoice) return prevSharedData;
 				return { ...prevSharedData, [val]: selectedChoice };
 			});
 		}

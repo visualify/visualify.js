@@ -3,8 +3,10 @@ import { Container } from 'react-bootstrap';
 import { ReactComponent as Corner } from '../../_media/corner.svg';
 import { useLocation, Link } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../_media/logo.svg';
+import { useTranslation } from 'react-i18next';
 
 function Vheader({ config }) {
+	const { t } = useTranslation();
 	const location = useLocation();
 	const [Navgation, setNavgation] = useState(null);
 	const [activeNav, setActiveNav] = useState('home');
@@ -45,7 +47,7 @@ function Vheader({ config }) {
 				{typeof logo === 'string' ? (
 					<img
 						src={logo}
-						alt='logo'
+						alt={t('header.logo') || 'logo'}
 						width='65'
 						height='65'
 						className='d-inline-block align-top'
@@ -120,7 +122,7 @@ function Vheader({ config }) {
 					})
 					.catch((err) => {
 						console.error(
-							`Failed to fetch navigation data: ${err}`,
+							t('errors.dataLoadError') + `: ${err}`,
 						);
 						setNavgation(null);
 					});
@@ -188,11 +190,13 @@ function Vheader({ config }) {
 
 		return (
 			<Container>
-				<ul
-					className={`navbar-nav d-flex justify-content-${nav_alignment} mx-auto`}
-					id='navtabs'>
-					{navs}
-				</ul>
+				<nav aria-label={t('header.navigation')}>
+					<ul
+						className={`navbar-nav d-flex justify-content-${nav_alignment} mx-auto`}
+						id='navtabs'>
+						{navs}
+					</ul>
+				</nav>
 			</Container>
 		);
 	};
@@ -209,7 +213,7 @@ function Vheader({ config }) {
 			<a
 				href={githubUrl}
 				className='github-corner'
-				aria-label='View source on GitHub'
+				aria-label={t('header.viewSource')}
 				target='_blank'
 				rel='noreferrer'>
 				{<Corner />}

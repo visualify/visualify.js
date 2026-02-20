@@ -23,3 +23,29 @@ yarn-debug.log*
 yarn-error.log*
 
 docs/MmTrBC/assets/*
+public/fixbug/*
+
+# EsoDev-specific configs (not part of core example)
+public/chromium.json
+public/visium.json
+public/codex.json
+public/visualify.json
+public/_nav.json
+public/debug/
+public/mainpage.png
+
+# Build outputs - keep only entry points in dist
+/dist/*.map
+/dist/stats.html
+/dist/visualify-docs.js
+/dist/visualify-docs.esm.js
+/dist/visualify-portal.js
+/dist/visualify-portal.esm.js
+/dist/visualify-shared.js
+
+# Docs build artifacts
+docs/static/js/visualify.js
+
+# AI/Agent working directories
+.claude/
+.sisyphus/

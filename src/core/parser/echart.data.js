@@ -40,12 +40,33 @@ const _parser_data = (options = {}, preset = {}) => {
 	}
 
 	if (options.data && typeof options.data === 'object') {
-		parsedOptions.series = Object.entries(options.data).map(
-			([name, data], index) => {
+		// Detect structured format: { categories: [...], series: [{name, data}] }
+		const isStructuredFormat = options.data.series && Array.isArray(options.data.series);
+
+		if (isStructuredFormat) {
+			// Set xAxis categories if provided
+			if (options.data.categories) {
+				parsedOptions.xAxis = {
+					...parsedOptions.xAxis,
+					data: options.data.categories,
+				};
+			}
+		}
+
+		// Normalize data entries: structured format vs flat object format
+		const dataEntries = isStructuredFormat
+			? options.data.series.map((s, i) => [s.name || `Series ${i + 1}`, s.data || [], s])
+			: Object.entries(options.data).map(([name, data]) => [name, data, null]);
+
+		parsedOptions.series = dataEntries.map(
+			([name, data, seriesMeta], index) => {
+				// Spread extra series-level properties from structured format (e.g., smooth, areaStyle)
+				const { name: _n, data: _d, ...extraSeriesProps } = seriesMeta || {};
 				let seriesObject = {
 					name,
 					type: getArrayEl(options.type, index),
 					data,
+					...extraSeriesProps,
 					...(options.markArea && {
 						markArea: _parseMarkArea(options.markArea, index),
 					}),

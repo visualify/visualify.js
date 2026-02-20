@@ -1,162 +1,160 @@
-<script defers>
-let ex1 = {
-                title: 'The Popular Web frameworks Before 2017',
-                subtitle: 'GitHub New Star Number',
-                type: 'bar',
-                data: {
-                    'Vue': [3000, 3500, 3900, 3100, 3200, 3100, 3600, 3300, 3600, 3400, 3100, 3000],
-                    'React': [4000, 4500, 4900, 4300, 4400, 4300, 4800, 4500, 4800, 4600, 4300, 4000],
-                    'Angular': [827, 949, 1400, 1000, 884, 911, 983, 989, 925, 1100, 1200, 930, ],
-                },
-                xAxis: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-            };
-const app = new $visualify.Recharts(ex1).mount('#example1');
-let ex2 = structuredClone(ex1);
-ex2.overrides= {
-                series: [{
-                        type: 'line',
-                        smooth: true
-                    }, ]
-                };
-const app2 = new $visualify.Recharts(ex2).mount('#example2');
-</script>
+# Charts
 
-# Visualify.Recharts
-
-`Visualify.Recharts` is a component library built on `React` and `ECharts` to solve
-the hassle of complex ECharts configuration items and data conversion. When
-generating an ECharts chart, users only need to care about **data** and
-**configuration items**, or even no configuration items, to generate a default
-chart. `ReCharts` helps you build charts **quickly** and **efficiently**.
+Visualify's charting engine is built on `React` and `ECharts` to simplify complex chart configuration. You only need to provide **data** and minimal **options** to generate interactive charts.
 
 ## Quick Start
 
-<details open>
+The easiest way to create charts is using ` ```visualify ` code blocks in your Docsify markdown:
 
-<summary>Recharts stands for React-Echarts, in order to use Recharts, you can follow
-these steps.</summary>
+<pre lang="markdown">
+```visualify
+{
+    "type": "bar",
+    "title": "My Chart",
+    "data": {
+        "categories": ["A", "B", "C"],
+        "series": [{ "name": "Data", "data": [10, 20, 30] }]
+    }
+}
+```
+</pre>
 
-Insert the `visualify` script in your `index.html` file.
+See the [Docsify Plugin](/docsify-plugin.md) documentation for full setup instructions.
+
+## Example: Bar Chart
+
+```visualify
+{
+    "type": "bar",
+    "title": "The Popular Web Frameworks Before 2017",
+    "subtitle": "GitHub New Star Number",
+    "data": {
+        "categories": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+        "series": [
+            {
+                "name": "Vue",
+                "data": [3000, 3500, 3900, 3100, 3200, 3100, 3600, 3300, 3600, 3400, 3100, 3000]
+            },
+            {
+                "name": "React",
+                "data": [4000, 4500, 4900, 4300, 4400, 4300, 4800, 4500, 4800, 4600, 4300, 4000]
+            },
+            {
+                "name": "Angular",
+                "data": [827, 949, 1400, 1000, 884, 911, 983, 989, 925, 1100, 1200, 930]
+            }
+        ]
+    }
+}
+```
+
+## Data Formats
+
+### Structured Format (Recommended)
+
+The structured format separates categories and series explicitly:
+
+```json
+{
+    "type": "line",
+    "data": {
+        "categories": ["Jan", "Feb", "Mar"],
+        "series": [
+            { "name": "Sales", "data": [100, 200, 150] },
+            { "name": "Costs", "data": [80, 120, 90] }
+        ]
+    }
+}
+```
+
+### Flat Object Format
+
+The flat format uses keys as series names (legacy, still supported):
+
+```json
+{
+    "type": "line",
+    "data": {
+        "Sales": [100, 200, 150],
+        "Costs": [80, 120, 90]
+    },
+    "xAxis": ["Jan", "Feb", "Mar"]
+}
+```
+
+## Hybrid Types & Smooth
+
+Support hybrid types such as `line`, `bar`, `scatter` by setting `type` as an array:
+
+```visualify
+{
+    "type": ["line", "bar"],
+    "title": "Hybrid Chart: Line + Bar",
+    "smooth": [true, false],
+    "data": {
+        "categories": ["Jan", "Feb", "Mar", "Apr", "May"],
+        "series": [
+            { "name": "Revenue", "data": [3000, 3500, 3900, 3100, 3200], "smooth": true },
+            { "name": "Orders", "data": [200, 250, 280, 220, 240] }
+        ]
+    }
+}
+```
+
+More options can be found in the [Attributes](/rechart-attributes.md).
+
+## Overrides Configuration
+
+The preset configuration can be overridden to match the original ECharts configuration. For example, setting `smooth` on specific series:
+
+```visualify
+{
+    "type": "bar",
+    "title": "The Popular Web Frameworks Before 2017",
+    "data": {
+        "categories": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+        "series": [
+            { "name": "Vue", "data": [3000, 3500, 3900, 3100, 3200, 3100, 3600, 3300, 3600, 3400, 3100, 3000] },
+            { "name": "React", "data": [4000, 4500, 4900, 4300, 4400, 4300, 4800, 4500, 4800, 4600, 4300, 4000] },
+            { "name": "Angular", "data": [827, 949, 1400, 1000, 884, 911, 983, 989, 925, 1100, 1200, 930] }
+        ]
+    },
+    "overrides": {
+        "series": [{ "type": "line", "smooth": true }]
+    }
+}
+```
+
+More advanced usage can be found in the [ECharts documentation](https://echarts.apache.org/en/index.html).
+
+## Programmatic API
+
+For advanced use cases, you can create charts programmatically using JavaScript:
 
 ```html
 <head>
-  ...
-  <script src="https://visualify.pharmacy.arizona.edu/dist/visualify.js"></script>
+  <script src="https://unpkg.com/visualify@latest/dist/visualify.js"></script>
 </head>
 ```
 
-Initilaize the `visualify` object in your `index.html` file.
+Initialize and mount:
 
-```html
-$visualify = {
-    mode: 'charts',
-}
+```javascript
+// Initialize Visualify in charts mode
+window.$visualify = { mode: 'charts' };
+
+// Create and mount a chart
+const chart = new $visualify.Recharts({
+    title: 'My Chart',
+    type: 'bar',
+    data: {
+        'Series A': [10, 20, 30],
+        'Series B': [15, 25, 35],
+    },
+    xAxis: ['Jan', 'Feb', 'Mar'],
+}).mount('#my-chart');
 ```
 
-Use the `Recharts` object in your `index.html` file.
-
 ```html
-<div id="example1"></div>
-<script>
-new $visualify.Recharts( config... ).mount('#example1');
-</script>
+<div id="my-chart"></div>
 ```
-
-</details>
-
-## Example of Recharts
-
-<!-- tabs:start -->
-
-#### **Output**
-
-<div id="example1">Here is the example of bar chart by using Recharts to show 2017 top popular frames. </div>
-
-#### **HTML**
-
-<pre data-lang="html">
-<code class="lang-html">
-&lt;div id=&quot;example1&quot;&gt;Example 1&lt;/div&gt;
-const app = new $visualify.Recharts({
-                title: 'The Popular Web frameworks Before 2017',
-                subtitle: 'GitHub New Star Number',
-                type: 'bar',
-                data: {
-                    'Vue': [3000, 3500, 3900, 3100, 3200, 3100, 3600, 3300, 3600, 3400, 3100, 3000],
-                    'React': [4000, 4500, 4900, 4300, 4400, 4300, 4800, 4500, 4800, 4600, 4300, 4000],
-                    'Angular': [827, 949, 1400, 1000, 884, 911, 983, 989, 925, 1100, 1200, 930, ],
-                },
-                xAxis: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-            });
-app.mount('#example1');
-</code>
-</pre>
-
-<!-- tabs:end -->
-
-## Advanced Usage
-
-### Hybird Types & Smooth & More options
-
-'Rechart' support hybird types such as `line` , `bar` , `scatter` , and more
-types by setting `type` as array of types, also for the `smooth`.
-
-```html
-{
-  ...
-  type: ['line', 'bar']
-  smooth: [true, false]
-}
-```
-
-More options can be found in the [Attributes](rechart-attributes).
-
-### Overrides Configuration
-
-The **preset** configuration in `Recharts` can be overridden to match the
-original `Echarts` configuration. For example, we can set `smooth` to `true` in
-`series`.
-
-```html
-{
-  ...
-  overrides: {
-        series: [{
-        type: 'line',
-        smooth: true
-    }, ]
-  },
-}
-```
-
-More advanced usage can be found in the
-[Echarts documentation](https://echarts.apache.org/en/index.html).
-
-<!-- tabs:start -->
-
-#### **Output**
-
-<div id="example2">Example 2</div>
-
-#### **HTML**
-
-<pre data-lang="html">
-    <code class="lang-html">
-        const app = new $visualify.Recharts({
-                        ...
-                        overrides: {
-                            series: [{
-                                type: 'line',
-                                smooth: true
-                            }, ]
-                        },
-                    }).mount('#example1');
-    </code>
-     <button class="docsify-copy-code-button">
-        <span class="label">Copy to clipboard</span>
-        <span class="error">Error</span>
-        <span class="success">Copied</span>
-    </button>
-</pre>
-
-<!-- tabs:end -->

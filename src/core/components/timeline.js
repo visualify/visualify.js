@@ -47,25 +47,25 @@ function Timeline({ props, style }) {
 		distance_pattern = undefined,
 		basicGap = 1,
 	} = config;
-	// Render title if it exists
+
 	const renderTitle = () => {
-		return title && <h3>{title}</h3>;
+		return title && <h3 className='v-control-title'>{title}</h3>;
 	};
 
 	const [nodes, setNodes] = useState([]);
+	const [activeNode, setActiveNode] = useState(null);
+
+	// Extract stable primitives from props for dependency tracking
+	const { selection, urlval, rm_suffix } = props;
 
 	useEffect(() => {
-		const { selection, urlval, rm_suffix } = props;
-
 		const fetchData = async () => {
 			try {
 				const response = await simplefetch(selection, { key: urlval });
-				// remove the suffix "_metadata" from the options
 				try {
 					const removed_suffix = response.map((item) =>
 						item.replace(rm_suffix, ''),
 					);
-					//console.log('Removed suffix:', removed_suffix);
 					const groupedNodes = generateNodes(
 						removed_suffix,
 						split_pattern,
@@ -80,7 +80,7 @@ function Timeline({ props, style }) {
 		};
 
 		fetchData();
-	}, [props, split_pattern, debug]);
+	}, [selection, urlval, rm_suffix, split_pattern, debug]);
 
 	const { setSharedData } = useAppContext();
 
@@ -90,7 +90,7 @@ function Timeline({ props, style }) {
 			setSharedData((prevSharedData) => {
 				return { ...prevSharedData, [val]: [node] };
 			});
-			alert(`Clicked: ${node}`);
+			setActiveNode(node);
 		}
 	};
 
@@ -101,7 +101,6 @@ function Timeline({ props, style }) {
 
 	const sortedNodes = Object.keys(nodes)
 		.sort((a, b) => {
-			//console.log('a:', a, 'b:', b, 'sort_pattern:', _sort_pattern);
 			const numA = parseInt(a.match(_sort_pattern)[1]);
 			const numB = parseInt(b.match(_sort_pattern)[1]);
 			return numA - numB;
@@ -122,7 +121,6 @@ function Timeline({ props, style }) {
 
 			const match = str.match(dis_regex);
 
-			//console.log('str', str, 'match:', match, 'distance_pattern:', dis_regex);
 			if (match) {
 				for (let i = distance_pattern.pos; i >= 1; i--) {
 					if (match[i]) {
@@ -142,12 +140,21 @@ function Timeline({ props, style }) {
 		const numA = extractNumber(main);
 		const numB = extractNumber(previousMain);
 
-		//console.log('numA:', numA, 'numB:', numB, 'diff:', Math.abs(numA - numB));
-
-		return Math.abs(numA - numB) * basicGap; // Distance based on the basic gap value
+		return Math.abs(numA - numB) * basicGap;
 	};
 
 	let previousMain = null;
+
+	// Check if a node group has any active sub-item
+	const isNodeActive = (main) => {
+		if (activeNode === main) return true;
+		if (nodes[main]) {
+			return nodes[main].some(
+				(sub) => activeNode === `${main}_${sub}`,
+			);
+		}
+		return false;
+	};
 
 	return (
 		<div
@@ -157,92 +164,45 @@ function Timeline({ props, style }) {
 			{renderTitle()}
 			<div
 				key={id + '.timeline'}
+				className='v-timeline'
 				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'flex-start',
 					position: 'relative',
 				}}>
-				<div
+				<div className='v-timeline-line' />
+				<div className='v-timeline-scroll'
 					style={{
-						borderLeft: '10px solid black',
-						//minHeight: '350px',
-						height: '100%',
-						position: 'absolute',
-						left: '0px',
-						top: '0px',
-					}}
-				/>
-				<div
-					style={{ ...style }}
-					className={className}>
-					<div
-						style={{
-							maxHeight: '500px',
-							overflowY: 'auto',
-							overflowX: 'hidden',
-						}}>
-						{Object.keys(sortedNodes).map((main, index) => {
-							const distance = calculateDistance(
-								main,
-								previousMain,
-							);
-							previousMain = main; // Update previousMain for the next iteration
-							return (
-								<div
-									key={index}
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-										marginTop: distance + 'px', // Apply distance here
-										position: 'relative',
-										flexDirection: 'column',
-									}}>
-									<div
-										style={{
-											position: 'absolute',
-											left: '0%',
-											top: '10px',
-											width: node_width ?? '50%',
-											height: '2px',
-											background: 'black',
-										}}
-									/>
-									<div
-										id='Timeline.Dot'
-										style={{
-											position: 'absolute',
-											left: '0%',
-											top: '15px',
-											width: '10px',
-											height: '10px',
-											borderRadius: '50%',
-											background: 'black',
-										}}
-									/>
+						maxHeight: '500px',
+						overflowY: 'auto',
+						overflowX: 'hidden',
+					}}>
+					{Object.keys(sortedNodes).map((main, index) => {
+						const distance = calculateDistance(
+							main,
+							previousMain,
+						);
+						previousMain = main;
+						const nodeActive = isNodeActive(main);
+						return (
+							<div
+								key={index}
+								className={`v-timeline-node${nodeActive ? ' has-active' : ''}`}
+								style={{
+									marginTop: distance + 'px',
+								}}>
+								<div className='v-timeline-branch' />
+								<div className='v-timeline-dot' />
+								<div className='v-timeline-content'>
 									{nodes[main] ? (
 										<>
-											<div style={{ marginLeft: '15%' }}>
+											<div className='v-timeline-label'>
 												{main}
 											</div>
-											<div
-												style={{
-													marginLeft: '15%',
-													display: 'flex',
-													flexWrap: 'wrap',
-												}}>
+											<div className='v-timeline-btn-group'>
 												{nodes[main].map(
 													(sub, subIndex) => (
 														<button
 															key={subIndex}
-															style={{
-																padding:
-																	'5px 3px',
-																marginLeft:
-																	'2px',
-																border: '1px solid black',
-																cursor: 'pointer',
-															}}
+															className={`v-timeline-btn${activeNode === `${main}_${sub}` ? ' active' : ''}`}
 															onClick={() =>
 																handleNodeClick(
 																	`${main}_${sub}`,
@@ -256,12 +216,7 @@ function Timeline({ props, style }) {
 										</>
 									) : (
 										<div
-											style={{
-												marginLeft: '15%',
-												padding: '5px 3px',
-												border: '1px solid black',
-												cursor: 'pointer',
-											}}
+											className={`v-timeline-single${activeNode === main ? ' active' : ''}`}
 											onClick={() =>
 												handleNodeClick(main)
 											}>
@@ -269,9 +224,9 @@ function Timeline({ props, style }) {
 										</div>
 									)}
 								</div>
-							);
-						})}
-					</div>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>

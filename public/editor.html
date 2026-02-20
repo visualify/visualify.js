@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualify Editor</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous"
+    />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #root {
+            height: 100vh;
+            width: 100vw;
+        }
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading-screen">
+            <div class="loading-spinner"></div>
+            <h3>Loading Visualify Editor...</h3>
+            <p>Please wait while the editor initializes</p>
+        </div>
+    </div>
+
+    <script>
+        // Load initial configuration from URL or localStorage
+        window.VISUALIFY_EDITOR_CONFIG = (function() {
+            // Try to get config from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const configParam = urlParams.get('config');
+
+            if (configParam) {
+                try {
+                    return JSON.parse(decodeURIComponent(configParam));
+                } catch (e) {
+                    console.warn('Failed to parse config from URL:', e);
+                }
+            }
+
+            // Try to load from localStorage
+            const saved = localStorage.getItem('visualify_editor_autosave');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.warn('Failed to parse saved config:', e);
+                }
+            }
+
+            // Return default config
+            return {
+                version: '2.5.3',
+                charts: [],
+                layout: { type: 'grid', rows: 1, cols: 1, gap: '10px' },
+                theme: 'modern'
+            };
+        })();
+    </script>
+
+    <!-- In a production build, this would be the compiled editor bundle -->
+    <script>
+        // Placeholder for editor bundle
+        // In development, the React dev server would serve the actual app
+        document.addEventListener('DOMContentLoaded', function() {
+            const root = document.getElementById('root');
+            const config = window.VISUALIFY_EDITOR_CONFIG;
+
+            // Simple demo UI when bundle is not available
+            root.innerHTML = `
+                <div style="padding: 20px; font-family: sans-serif;">
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h1 style="margin: 0 0 10px 0;">Visualify Editor</h1>
+                        <p style="margin: 0; color: #666;">
+                            Configuration loaded with ${config.charts?.length || 0} charts
+                        </p>
+                    </div>
+
+                    <div style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px;">
+                        <h3 style="margin-top: 0;">Configuration Preview</h3>
+                        <pre style="background: #f8f9fa; padding: 15px; border-radius: 4px; overflow: auto; font-size: 12px;">${JSON.stringify(config, null, 2)}</pre>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+                        <strong>Note:</strong> This is a development preview.
+                        The full editor requires building the React application with:
+                        <code style="background: #fff; padding: 2px 6px; border-radius: 3px; margin-left: 5px;">npm run build:editor</code>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button onclick="window.location.reload()" style="padding: 10px 20px; margin-right: 10px; cursor: pointer;">Reload</button>
+                        <button onclick="localStorage.clear(); window.location.reload()" style="padding: 10px 20px; cursor: pointer;">Clear Storage</button>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

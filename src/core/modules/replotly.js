@@ -22,9 +22,9 @@ const RePlotly = ({ props, style }) => {
 		const updatePlot = async () => {
 			const { settings, parser } = props;
 			let preset = getPreset(settings?.preset);
+
 			if (parser) {
 				try {
-					// fetch data from api
 					const fetched_data = await handle_Data(
 						parser,
 						preset.layout,
@@ -38,20 +38,23 @@ const RePlotly = ({ props, style }) => {
 
 					if (parser.type === 'violin') {
 						preset.data = handle_violin_plot(processed_data);
-						setData(() => preset.data);
 					}
 				} catch (err) {
 					if (
 						err.message === 'No data fetched from api' &&
 						settings?.ignoreEmptyData
 					) {
-					} else console.log(err.message);
+						// silently ignore empty data when configured
+					} else console.error(err.message);
 				}
 			}
 
-			setData((data) => [...preset.data]);
-			setLayout((layout) => ({ ...preset.layout }));
-			setConfig((config) => ({ ...preset.config }));
+			// Use props.data if provided directly (e.g., from DotBio),
+			// otherwise fall back to preset data
+			const finalData = props.data?.length ? props.data : preset.data;
+			setData([...finalData]);
+			setLayout({ ...preset.layout });
+			setConfig({ ...preset.config });
 		};
 
 		updatePlot();

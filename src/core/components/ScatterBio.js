@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Scatter from './Scatter';
 import CircularProgress from '../widgets/circularProgress';
 import { useAppContext } from '../appContext';
@@ -26,7 +26,30 @@ function ScatterBio({ props, style, reset }) {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
+	// Use refs for sharedData/props to access latest without depending on them
+	const sharedDataRef = useRef(sharedData);
+	sharedDataRef.current = sharedData;
+	const propsRef = useRef(props);
+	propsRef.current = props;
+
+	// Extract stable keys from props for dependency tracking
+	const { geneval, metaval, colourval } = props;
+	const visiumCellFraction = props.config?.visium_cell_fraction;
+	// Track config overrides that affect rendering (e.g. VisiumPlot background image, legend, axes)
+	const configLegend = props.config?.legend;
+	const configHasBg = !!props.config?.backgroundColor;
+	// Build snapshot of relevant sharedData keys
+	const relevantKeys = [geneval, metaval, colourval].filter(Boolean);
+	const sharedDataSnapshot = JSON.stringify(
+		relevantKeys.reduce((acc, key) => {
+			acc[key] = sharedData[key];
+			return acc;
+		}, {}),
+	);
+
 	useEffect(() => {
+		const currentProps = propsRef.current;
+		const currentSharedData = sharedDataRef.current;
 		// ------------------------------ Fetch Data ------------------------------
 		const {
 			meta,
@@ -42,7 +65,7 @@ function ScatterBio({ props, style, reset }) {
 			entry_mapping = undefined,
 			exp_condition = 0,
 			startup_msg = '',
-		} = props;
+		} = currentProps;
 
 		// error handling for missing config --------------------------------------
 
@@ -95,8 +118,8 @@ function ScatterBio({ props, style, reset }) {
 
 		// ------------------------------------------------------------------------
 
-		const _query_gene = geneval ? sharedData[geneval] : sharedData.gene;
-		const _query_meta = metaval ? sharedData[metaval] : sharedData.meta;
+		const _query_gene = geneval ? currentSharedData[geneval] : currentSharedData.gene;
+		const _query_meta = metaval ? currentSharedData[metaval] : currentSharedData.meta;
 
 		const updatePlot = async () => {
 			try {
@@ -206,8 +229,8 @@ function ScatterBio({ props, style, reset }) {
 				// ------------------------------ Proccess Data ------------------------------
 				const { colors: __colors = [] } = config;
 
-				const filted_colour = sharedData[colourval]
-					? sharedData[colourval].replace(' ', '_')
+				const filted_colour = currentSharedData[colourval]
+					? currentSharedData[colourval].replace(' ', '_')
 					: colour;
 
 				if (debug)
@@ -356,19 +379,24 @@ function ScatterBio({ props, style, reset }) {
 
 				// Create a series for each unique cell type
 				const series = __celltypes.map((cellType) => {
-					return {
+					const seriesItem = {
 						name: cellType,
 						type: 'scatter',
 						data: processedData.filter(
 							(data) =>
 								data.Type === cellType && data.Expression > -1,
 						),
-						itemStyle: {
-							color: seriescolor[cellType].color,
-						},
-						symbol: seriescolor[cellType].symbol,
+						symbol: seriescolor[cellType]?.symbol ?? 'circle',
 						symbolSize: symbolSize,
 					};
+					// When legend is disabled (e.g. Visium spatial mode), skip itemStyle.color
+					// to allow visualMap to control dot coloring by expression/cell fraction
+					if (config.legend !== false && seriescolor[cellType]) {
+						seriesItem.itemStyle = {
+							color: seriescolor[cellType].color,
+						};
+					}
+					return seriesItem;
 				});
 
 				//console.log("series: ", series);
@@ -458,7 +486,7 @@ function ScatterBio({ props, style, reset }) {
 				// Update props for Scatter
 
 				let scatterBioProps = {
-					...props,
+					...currentProps,
 					config: {
 						chartWidth: 800,
 						chartHeight: 600,
@@ -500,7 +528,7 @@ function ScatterBio({ props, style, reset }) {
 
 				setLoading(false);
 			} catch (err) {
-				console.log(err);
+				console.error(err);
 				if (err.name === 'TypeError' && simpleload)
 					setError({
 						message: `invalid URL for metadata/gene,\nplease check your URL or set simpleload to false`,
@@ -510,13 +538,14 @@ function ScatterBio({ props, style, reset }) {
 			}
 		};
 		updatePlot();
-	}, [props, sharedData, debug]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sharedDataSnapshot, visiumCellFraction, configLegend, configHasBg, debug]);
 
 	if (reset) {
 		reset(props.id, (vals) => {
 			// logic to reset the data
 			const { gene: rec_gene = ' ' } = vals;
-			console.log('received data', sharedData[rec_gene]);
+			// reset callback
 		});
 	}
 

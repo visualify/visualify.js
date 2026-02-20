@@ -1,7 +1,7 @@
 /*
  * @Author       : Lihao leolihao@arizona.edu
  * @Date         : 2023-11-12 17:35:02
- * @FilePath     : /visualifyjs/src/core/components/parser.scatterBio.js
+ * @FilePath     : /visualify.js/src/core/components/parser.scatterBio.js
  * @Description  :
  * Copyright (c) 2023 by Lihao (leolihao@arizona.edu), All Rights Reserved.
  */
@@ -61,18 +61,17 @@ export const parseConfig = (props) => {
 					Math.round(params.data.Expression * 10000) / 10000;
 				return `
                     <div style="text-align: center;">
-                        ${params.data.Cell_ID} 
-                        <br/> Type: <strong>${params.data.Cell_Type} </strong>
-                        <br/> Stage: <strong>${params.data.Stage}</strong>
-                        <br/> #UMI: <strong>${params.data.UMI}</strong>
-                        <br/> #Gene: <strong>${params.data.Gene}</strong>
-                        <br/> MT%: <strong>${params.data.MT}</strong>
                         ${
-							express != null
-								? '<br/> Expression: <strong>' +
-								  express +
-								  '</strong>'
+							params.data.Cell_ID
+								? '<strong>' + params.data.Cell_ID + '</strong> <br/>'
 								: ''
+						} 
+                        ${params.data.Cell_Type != null ? ' Type: <strong>' + params.data.Cell_Type + '</strong><br/>' : ''} 
+						${params.data.Stage != null ? ' Stage: <strong>' + params.data.Stage + '</strong><br/>' : ''}
+						${params.data.UMI != null ? ' #UMI: <strong>' + params.data.UMI + '</strong><br/>' : ''}
+						${params.data.Gene != null ? ' #Gene: <strong>' + params.data.Gene + '</strong><br/>' : ''}
+						${params.data.MT != null ? ' MT%: <strong>' + params.data.MT + '</strong><br/>' : ''}
+                        ${express != null ? 'Expression: <strong>' + express + '</strong>': ''
 						}
                     </div>
                 `;
@@ -142,7 +141,6 @@ export const parseConfig = (props) => {
 };
 
 export const handleSimplyLoad = (simpleload) => {
-	console.log(`handleSimplyLoad: `, simpleload);
 	// fetch data direcly from config
 	// fetch data from simply api
 };
@@ -188,7 +186,7 @@ export const handleAPI = async (config, sharedData, bbox = false) => {
 			//console.log(`result for ${item} : `, result);
 			fetched_dat[item] = result;
 		} else if (id) {
-			//console.log(`id for ${item} : `, id, dependencies);
+			//console.log(`dep2 id for ${item} : `, id, dependencies);
 
 			const result = await simplefetch(href, {
 				id: dependencies[dep] + '/' + id,
@@ -255,6 +253,8 @@ export const parseData = (fetched, config, sharedData) => {
 		throw new Error('fetched data is not valid: ' + fetched);
 	}
 
+	//console.log(`fetched: `, fetched);
+
 	const metadata = fetched.metadata;
 	const genes = fetched.gene;
 
@@ -292,11 +292,11 @@ export const parseData = (fetched, config, sharedData) => {
 				config?.mapping?.axis,
 			),
 			legend: handleLegend(category),
-			visualMap: handleVisualMap(genes),
+			visualMap: handleVisualMap(genes, config.visualmap),
 			title: fetched?.fetched_ID?.gene ?? '',
 		};
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		throw new Error('Failed to parse data');
 	}
 };
@@ -541,9 +541,10 @@ const handleLegend = (category) => {
 	return legend;
 };
 
-const handleVisualMap = (genes) => {
+const handleVisualMap = (genes, visualmap = {}) => {
 	if (!genes) return [];
 	// Initialize max and min variables with the first value in the object
+
 	let maxValue = Number.NEGATIVE_INFINITY;
 	let minValue = Number.POSITIVE_INFINITY;
 	let visualMap = {};
@@ -573,6 +574,8 @@ const handleVisualMap = (genes) => {
 	visualMap.textStyle = {
 		writingMode: 'vertical-lr',
 	};
+
+	visualMap = { ...visualMap, ...visualmap };
 
 	//console.log(`handlesVisualMap: `, visualMap);
 	return visualMap;

@@ -20,6 +20,12 @@ import VisiumPlot from '../components/VisiumPlot';
 import RePlotly from '../modules/replotly';
 import List from '../components/list';
 import DotBio from '../components/dotplot';
+import Scatter3D from '../components/Scatter3D';
+import Bar3D from '../components/Bar3D';
+import Surface3D from '../components/Surface3D';
+import Line3D from '../components/Line3D';
+import ThreeScene from '../components/ThreeScene';
+import ThreeCustom from '../components/ThreeCustom';
 
 const widgetMapping = {
 	// Add  components here
@@ -37,6 +43,14 @@ const widgetMapping = {
 	Plotly: RePlotly,
 	List,
 	DotBio,
+	// 3D Chart Components
+	scatter3d: Scatter3D,
+	bar3d: Bar3D,
+	surface3d: Surface3D,
+	line3d: Line3D,
+	// Three.js Components
+	threejs: ThreeScene,
+	threecustom: ThreeCustom,
 };
 
 export default widgetMapping;

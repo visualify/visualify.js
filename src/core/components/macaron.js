@@ -152,18 +152,23 @@ function Macaron({ props, style }) {
 
 	const { setSharedData } = useAppContext();
 
+	// Only sync to sharedData when selection actually changes to non-empty
+	// Use JSON for stable comparison to avoid re-renders from new array references
+	const selectedNodesKey = JSON.stringify(selected.nodes);
 	useEffect(() => {
-		if (
-			val &&
-			Array.isArray(selected.nodes) &&
-			selected.nodes.length >= 0
-		) {
-			setSharedData((prevSharedData) => ({
-				...prevSharedData,
-				[val]: selected.nodes,
-			}));
+		if (val) {
+			setSharedData((prevSharedData) => {
+				const prev = prevSharedData[val];
+				// Skip update if the value is already the same
+				if (JSON.stringify(prev) === selectedNodesKey) return prevSharedData;
+				return {
+					...prevSharedData,
+					[val]: selected.nodes,
+				};
+			});
 		}
-	}, [selected, val, setSharedData]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedNodesKey, val, setSharedData]);
 
 	return (
 		<div

@@ -1,6 +1,6 @@
 {
     "name": "visualifyjs",
-    "version": "3.0.0",
+    "version": "3.0.1-beta.0",
     "main": "dist/visualify.js",
     "homepage": "https://visualify.pharmacy.arizona.edu",
     "license": "GNU General Public License v3.0",
